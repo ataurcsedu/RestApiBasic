@@ -19,3 +19,5 @@ To test the project follow the steps,
 6) We want to get all user list from db. so we send a request to server with that access token.
 7) put the url (http://localhost:8080/TestSpring/api/users?access_token=) in postman with access_token you found in just steps 5.
 8) Select Request method to GET and hit the send button. If everything is ok, then you found a list of user.
+
+N.B: Its not a complete project, but for first step how spring security oauth2 works can be seen here.

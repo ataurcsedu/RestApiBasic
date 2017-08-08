@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @EnableAuthorizationServer
 public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter {
 
-//	private static String REALM="EXAMPLE_REALM";
+	public static String REALM="EXAMPLE_REALM";
 	private static final String RESOURCE_ID = "SPRING_REST_API";
 	
         @Autowired
@@ -61,7 +61,7 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-//		oauthServer.realm(REALM+"/client");
+		oauthServer.realm(REALM+"/client");
 	}
 
 }

@@ -5,6 +5,7 @@
  */
 package com.rest.database.bean;
 
+import com.rest.database.entity.User;
 import com.rest.exception.ServiceException;
 import java.util.Arrays;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
         em = getEntityManager();
         where += " 1=1";
 
-        String query = "select u.id, u.userName, u.email, u.status from User u where " + where;
+        String query = "select u.id, u.mobile, u.email, u.username, u.fullname, u.dob, u.status from User u where " + where;
         System.out.println("QUERY= " + query);
         Query selectQuery = em.createQuery(query);
         
@@ -68,13 +69,44 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
         em = getEntityManager();
         where += " 1=1";
 
-        String query = "select u.id, u.userName, u.email, u.status from User u where " + where;
+        String query = "select u.id, u.mobile, u.email, u.username, u.fullname, u.dob, u.status from User u where " + where;
         System.out.println("QUERY= " + query);
         Query selectQuery = em.createQuery(query);
         
         writeLog();
         
         return selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).getResultList();
+    }
+
+    @Override
+    public Object createUser(User user) {
+        EntityManager em = null;
+        em = getEntityManager();
+        try{
+            em.getTransaction().begin();
+            em.persist(user);
+            em.getTransaction().commit();
+        }catch(Throwable t){
+            return new ServiceException(t.getMessage(),1000);
+        }
+        writeLog();
+        return user;
+    }
+    
+    @Override
+    public Object updateUser(User user,int id) {
+        EntityManager em = null;
+        em = getEntityManager();
+        try{
+            em.getTransaction().begin();
+            em.find(User.class, id);
+            em.merge(user);
+            em.getTransaction().commit();
+        }catch(Throwable t){
+            return new ServiceException(t.getMessage(),1000);
+        }
+        writeLog();
+        return user;
     }
     
     @Override

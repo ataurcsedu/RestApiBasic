@@ -14,8 +14,9 @@ package com.rest.utils;
  * and open the template in the editor.
  */
 
+import com.rest.exception.FieldErrorDTO;
+import com.rest.exception.Errors;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -23,20 +24,22 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.JOptionPane;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.springframework.validation.FieldError;
 
 /**
  *
@@ -181,7 +184,7 @@ public class Utils {
             dateTimeXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
         } catch (DatatypeConfigurationException e) {
 
-//            LOGGER.debug("Date of Birth Error");
+//            LOGGER.debug("Date of Birth Errors");
             return null;
         }
         if (dateTimeXMLGregorianCalendar != null) {
@@ -329,5 +332,27 @@ public class Utils {
     public static void main(String[] args) {
         System.out.println("result is " +is_validate_telephone(null));
     }
+    
+    public static Errors processApiError(List<FieldError> fieldError,HttpServletResponse resp){
+        if(fieldError!=null && fieldError.size() > 0){
+            resp.setStatus(resp.SC_BAD_REQUEST);
+            Errors v = new Errors();
+            for (FieldError f : fieldError) {
+                String message = f.getDefaultMessage();
+                message = message.split(";")[0].replaceAll("java.lang.", "");
+                FieldErrorDTO d = new FieldErrorDTO(f.getField(), message);
+                v.setFieldErrors(d);
+            }
+            return v;
+        }
+        return null;
+    }
+    
+    public static Errors processApiError(String message,int code){
+        Errors errors = new Errors();
+        errors.setInternalErrors(message, code);
+        return errors;
+    }
+    
 }
 

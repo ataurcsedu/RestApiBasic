@@ -12,4 +12,7 @@ package com.rest.utils;
 public class Defs {
     public static final String APP_VERSION = "v1";
     public static final String CONTROLLER_PATH = "/api/";
+    public static final String STATUS_ACTIVE = "ACTIVE";
+    public static final String CREATED_BY_USER = "USER";
+    public static final String STATUS_INACTIVE = "INACTIVE";
 }

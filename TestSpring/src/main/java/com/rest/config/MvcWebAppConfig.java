@@ -5,10 +5,13 @@
  */
 package com.rest.config;
 
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -23,7 +26,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = {"com.rest"})
+@ComponentScan(basePackages = {"com.rest.*"})
 public class MvcWebAppConfig extends WebMvcConfigurerAdapter {
 
     @Override
@@ -52,6 +55,12 @@ public class MvcWebAppConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
+    }
+    
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new MappingJackson2HttpMessageConverter());
+        super.configureMessageConverters(converters);
     }
 
     @Bean

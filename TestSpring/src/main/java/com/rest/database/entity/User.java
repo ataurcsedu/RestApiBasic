@@ -6,6 +6,7 @@
 package com.rest.database.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,11 +16,15 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Ataur Rahman
+ * @author Rezwan
  */
 @Entity
 @Table(name = "user")
@@ -27,10 +32,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
-    @NamedQuery(name = "User.findByUserName", query = "SELECT u FROM User u WHERE u.userName = :userName"),
-    @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
+    @NamedQuery(name = "User.findByMobile", query = "SELECT u FROM User u WHERE u.mobile = :mobile"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status")})
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+    @NamedQuery(name = "User.findByFullname", query = "SELECT u FROM User u WHERE u.fullname = :fullname"),
+    @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
+    @NamedQuery(name = "User.findByDob", query = "SELECT u FROM User u WHERE u.dob = :dob"),
+    @NamedQuery(name = "User.findByCode", query = "SELECT u FROM User u WHERE u.code = :code"),
+    @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status"),
+    @NamedQuery(name = "User.findByCreatedBy", query = "SELECT u FROM User u WHERE u.createdBy = :createdBy"),
+    @NamedQuery(name = "User.findByCreationDate", query = "SELECT u FROM User u WHERE u.creationDate = :creationDate"),
+    @NamedQuery(name = "User.findByLastUpdatedBy", query = "SELECT u FROM User u WHERE u.lastUpdatedBy = :lastUpdatedBy"),
+    @NamedQuery(name = "User.findByLastUpdateDate", query = "SELECT u FROM User u WHERE u.lastUpdateDate = :lastUpdateDate")})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,17 +52,66 @@ public class User implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
-    @Column(name = "userName")
-    private String userName;
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "mobile")
+    private String mobile;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
-    @Column(name = "password")
-    private String password;
-    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "email")
     private String email;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "username")
+    private String username;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 30)
+    @Column(name = "fullname")
+    private String fullname;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 70)
+    @Column(name = "password")
+    private String password;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "dob")
+    private String dob;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 30)
+    @Column(name = "code")
+    private String code;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 10)
     @Column(name = "status")
     private String status;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "created_by")
+    private String createdBy;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "creation_date")
+    @Temporal(TemporalType.DATE)
+    private Date creationDate;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "last_updated_by")
+    private String lastUpdatedBy;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "last_update_date")
+    @Temporal(TemporalType.DATE)
+    private Date lastUpdateDate;
 
     public User() {
     }
@@ -58,12 +120,20 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String userName, String password, String email, String status) {
+    public User(Integer id, String mobile, String email, String username, String fullname, String password, String dob, String code, String status, String createdBy, Date creationDate, String lastUpdatedBy, Date lastUpdateDate) {
         this.id = id;
-        this.userName = userName;
-        this.password = password;
+        this.mobile = mobile;
         this.email = email;
+        this.username = username;
+        this.fullname = fullname;
+        this.password = password;
+        this.dob = dob;
+        this.code = code;
         this.status = status;
+        this.createdBy = createdBy;
+        this.creationDate = creationDate;
+        this.lastUpdatedBy = lastUpdatedBy;
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     public Integer getId() {
@@ -74,20 +144,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public String getEmail() {
@@ -98,12 +160,84 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(String lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     @Override

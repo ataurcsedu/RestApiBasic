@@ -5,6 +5,7 @@
  */
 package com.rest.database.bean;
 
+import com.rest.database.entity.User;
 import com.rest.exception.ServiceException;
 import java.util.Arrays;
 import java.util.Set;
@@ -24,11 +25,15 @@ public interface IUserEntityManager {
     
     public Object getUsers(int startIndex, int limit, String where) throws ServiceException;
     public Object getUser(String where) throws ServiceException;
+    public Object createUser(User user) throws ServiceException;
+    public Object updateUser(User user,int id) throws ServiceException;
     public long getTotalCount(String where);
     
     default public void writeLog(){
         Logger LOGGER = Logger.getLogger("<USER > : ");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
         
         Set<String> roles = authentication.getAuthorities()
                 .stream()

@@ -11,9 +11,14 @@ package com.rest.business.user.entity;
  */
 public class UserSummary {
     private int id;
-    private String userName;
+    private String mobile;
     private String email;
+    private String userName;
+    private String fullName;
+    private String dob;
+    private String code;
     private String status;
+    
     
     public UserSummary(){
     }
@@ -49,6 +54,39 @@ public class UserSummary {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
     
     

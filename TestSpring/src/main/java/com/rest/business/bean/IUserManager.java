@@ -18,5 +18,7 @@ import org.springframework.stereotype.Component;
 public interface IUserManager {
     
     public GetUserServiceResponse getUsers(Long startIndex,Long limit,UserBO user);
+    public Object createUser(UserBO user);
+    public Object updateUser(UserBO user,int id);
     public UserSummary getUser(String userId);
 }

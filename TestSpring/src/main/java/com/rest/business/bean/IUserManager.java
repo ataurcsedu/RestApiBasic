@@ -7,6 +7,7 @@ package com.rest.business.bean;
 
 import com.rest.business.user.entity.UserBO;
 import com.rest.business.user.entity.UserSummary;
+import com.rest.exception.ServiceException;
 import com.rest.ws.response.GetUserServiceResponse;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,9 @@ import org.springframework.stereotype.Component;
 
 public interface IUserManager {
     
-    public GetUserServiceResponse getUsers(Long startIndex,Long limit,UserBO user);
-    public Object createUser(UserBO user);
+    public Object getUsers(Long startIndex,Long limit,UserBO user);
+    public Object createUser(UserBO user,String role);
     public Object updateUser(UserBO user,int id);
     public UserSummary getUser(String userId);
+    public UserSummary activateUser(int userId)throws ServiceException;
 }

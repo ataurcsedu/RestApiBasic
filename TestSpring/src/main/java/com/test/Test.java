@@ -15,9 +15,9 @@ public class Test {
 
   public static void main(String[] args) {
 
-	int i = 0;
+	/*int i = 0;
 	while (i < 10) {
-		String password = "munna";
+		String password = "sun";
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 String hashedPassword = passwordEncoder.encode(password);
 
@@ -25,7 +25,12 @@ public class Test {
                 System.out.println(passwordEncoder.matches(password, hashedPassword));
                 
 		i++;
-	}
+	}*/
+      
+    int a= 0123;
+    int b = 0345;
+      System.out.println("Result is:"+(a+b));
+   
 
   }
 }

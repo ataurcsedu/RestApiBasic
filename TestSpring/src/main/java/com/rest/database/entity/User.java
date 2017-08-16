@@ -5,9 +5,11 @@
  */
 package com.rest.database.entity;
 
+import com.rest.oauth2.entity.UserRoles;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,12 +42,16 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByDob", query = "SELECT u FROM User u WHERE u.dob = :dob"),
     @NamedQuery(name = "User.findByCode", query = "SELECT u FROM User u WHERE u.code = :code"),
+    @NamedQuery(name = "User.findBySex", query = "SELECT u FROM User u WHERE u.sex = :sex"),
     @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status"),
+    @NamedQuery(name = "User.findByEnabled", query = "SELECT u FROM User u WHERE u.enabled = :enabled"),
     @NamedQuery(name = "User.findByCreatedBy", query = "SELECT u FROM User u WHERE u.createdBy = :createdBy"),
     @NamedQuery(name = "User.findByCreationDate", query = "SELECT u FROM User u WHERE u.creationDate = :creationDate"),
     @NamedQuery(name = "User.findByLastUpdatedBy", query = "SELECT u FROM User u WHERE u.lastUpdatedBy = :lastUpdatedBy"),
     @NamedQuery(name = "User.findByLastUpdateDate", query = "SELECT u FROM User u WHERE u.lastUpdateDate = :lastUpdateDate")})
 public class User implements Serializable {
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private UserRoles userRoles;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,11 +94,18 @@ public class User implements Serializable {
     @Size(min = 1, max = 30)
     @Column(name = "code")
     private String code;
+    @Size(max = 7)
+    @Column(name = "sex")
+    private String sex;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
     @Column(name = "status")
     private String status;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "enabled")
+    private int enabled;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -120,7 +134,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String mobile, String email, String username, String fullname, String password, String dob, String code, String status, String createdBy, Date creationDate, String lastUpdatedBy, Date lastUpdateDate) {
+    public User(Integer id, String mobile, String email, String username, String fullname, String password, String dob, String code, String status, int enabled, String createdBy, Date creationDate, String lastUpdatedBy, Date lastUpdateDate) {
         this.id = id;
         this.mobile = mobile;
         this.email = email;
@@ -130,6 +144,7 @@ public class User implements Serializable {
         this.dob = dob;
         this.code = code;
         this.status = status;
+        this.enabled = enabled;
         this.createdBy = createdBy;
         this.creationDate = creationDate;
         this.lastUpdatedBy = lastUpdatedBy;
@@ -200,12 +215,28 @@ public class User implements Serializable {
         this.code = code;
     }
 
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(int enabled) {
+        this.enabled = enabled;
     }
 
     public String getCreatedBy() {
@@ -263,6 +294,14 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.rest.database.entity.User[ id=" + id + " ]";
+    }
+
+    public UserRoles getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(UserRoles userRoles) {
+        this.userRoles = userRoles;
     }
     
 }

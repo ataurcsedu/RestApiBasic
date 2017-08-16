@@ -9,7 +9,7 @@ package com.rest.exception;
  *
  * @author Ataur Rahman
  */
-public class NonExistentEntityException extends Exception{
+public class NonExistentEntityException extends IllegalArgumentException{
     
     public NonExistentEntityException(String message, Throwable cause) {
         super(message, cause);

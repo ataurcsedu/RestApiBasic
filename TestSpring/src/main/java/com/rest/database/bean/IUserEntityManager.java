@@ -6,6 +6,7 @@
 package com.rest.database.bean;
 
 import com.rest.database.entity.User;
+import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import java.util.Arrays;
 import java.util.Set;
@@ -25,8 +26,9 @@ public interface IUserEntityManager {
     
     public Object getUsers(int startIndex, int limit, String where) throws ServiceException;
     public Object getUser(String where) throws ServiceException;
-    public Object createUser(User user) throws ServiceException;
-    public Object updateUser(User user,int id) throws ServiceException;
+    public Object findOne(int id) throws ServiceException;
+    public Object createUser(User user,String role) throws ServiceException;
+    public Object updateUser(User user) throws ServiceException;
     public long getTotalCount(String where);
     
     default public void writeLog(){

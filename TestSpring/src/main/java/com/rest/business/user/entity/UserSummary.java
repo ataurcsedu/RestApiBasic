@@ -16,7 +16,9 @@ public class UserSummary {
     private String userName;
     private String fullName;
     private String dob;
+    private String sex;
     private String code;
+    
     private String status;
     
     
@@ -87,6 +89,14 @@ public class UserSummary {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
     
     

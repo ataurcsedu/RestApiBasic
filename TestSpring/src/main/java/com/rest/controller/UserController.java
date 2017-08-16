@@ -9,11 +9,14 @@ import com.rest.business.bean.IUserManager;
 import com.rest.business.user.entity.UserBO;
 import com.rest.business.user.entity.UserSummary;
 import com.rest.exception.ResourceAccessDeniedException;
+import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -56,13 +59,13 @@ public class UserController {
      }*/
     @RequestMapping(value = "users", method = RequestMethod.GET)
     @ResponseBody
-    public List<UserSummary> getUsers(SecurityContextHolderAwareRequestWrapper s, HttpServletRequest req, @RequestParam(value = "offset", defaultValue = "0") long index,
+    public Object getUsers(SecurityContextHolderAwareRequestWrapper s, HttpServletRequest req, @RequestParam(value = "offset", defaultValue = "0") long index,
             @RequestParam(value = "limit", defaultValue = "10") long limit) throws ResourceAccessDeniedException {
 
         //if(req.isUserInRole("ROLE_USER")){
         GetUserServiceResponse resp = new GetUserServiceResponse();
-        resp = userService.getUsers(index, limit, new UserBO());
-        return resp.getUserList();
+        Object object = userService.getUsers(index, limit, new UserBO());
+        return object;
         //}
 
     }
@@ -70,11 +73,12 @@ public class UserController {
     @RequestMapping(value = "users", method = RequestMethod.POST)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public Object postUsers(HttpServletRequest req,HttpServletResponse response, @ModelAttribute @Valid UserBO userBO, BindingResult result) {
+    public Object createUsers(HttpServletRequest req,HttpServletResponse response, @ModelAttribute @Valid UserBO userBO, BindingResult result) {
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
         }
-        return userService.createUser(userBO);
+        //if roles field is empty the default user created with ROLE_USER
+        return userService.createUser(userBO,Defs.ROLE_USER);
     }
     
     @RequestMapping(value = "users/{userid}", method = RequestMethod.POST)
@@ -96,6 +100,22 @@ public class UserController {
     public UserSummary getUser(HttpServletRequest req, @PathVariable String id) {
         UserSummary userSummary = userService.getUser(id);
         return userSummary;
+
+    }
+
+    @RequestMapping(value = "users/activate/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Object activateUser(HttpServletRequest req, @PathVariable String id) {
+        if(!Utils.isEmpty(id)){
+            UserSummary userSummary;
+            try {
+                userSummary = userService.activateUser(Integer.parseInt(id));
+            } catch (ServiceException ex) {
+                return Utils.processApiError(ex.getMessage(), ex.getErrorCode());
+            }
+            return userSummary;
+        }
+        return Utils.processApiError("No user id Found", Defs.ERROR_CODE_UPDATE);
 
     }
 

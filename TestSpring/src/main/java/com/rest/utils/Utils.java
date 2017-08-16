@@ -13,7 +13,6 @@ package com.rest.utils;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import com.rest.exception.FieldErrorDTO;
 import com.rest.exception.Errors;
 import java.awt.Graphics2D;
@@ -26,9 +25,11 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -53,7 +54,6 @@ public class Utils {
     private static final String PHONE_NO_REGEX = "[0-9]+";
 
     public static Date getStringToDate(String stringDate) {
-
 
         if (stringDate == null || stringDate.length() < 1) {
             return null;
@@ -268,9 +268,6 @@ public class Utils {
             }
         }
 
-
-
-
     }
 
     public static String buildJPQLLikeQueryOR(String colName, String value, boolean isAnd) {
@@ -317,10 +314,11 @@ public class Utils {
     public static boolean is_validate_telephone(String telephone_no) {
         String tmpPhone = "";
         if (telephone_no != null && !telephone_no.equalsIgnoreCase("")) {
-            if(telephone_no.startsWith("+"))
-                tmpPhone = telephone_no.substring(1, telephone_no.length()-1);
-            else 
+            if (telephone_no.startsWith("+")) {
+                tmpPhone = telephone_no.substring(1, telephone_no.length() - 1);
+            } else {
                 tmpPhone = telephone_no;
+            }
             Pattern pattern = Pattern.compile(PHONE_NO_REGEX);
             Matcher matcher = pattern.matcher(tmpPhone);
             return matcher.matches();
@@ -330,11 +328,11 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        System.out.println("result is " +is_validate_telephone(null));
+        System.out.println("result is " + is_validate_telephone(null));
     }
-    
-    public static Errors processApiError(List<FieldError> fieldError,HttpServletResponse resp){
-        if(fieldError!=null && fieldError.size() > 0){
+
+    public static Errors processApiError(List<FieldError> fieldError, HttpServletResponse resp) {
+        if (fieldError != null && fieldError.size() > 0) {
             resp.setStatus(resp.SC_BAD_REQUEST);
             Errors v = new Errors();
             for (FieldError f : fieldError) {
@@ -347,12 +345,59 @@ public class Utils {
         }
         return null;
     }
-    
-    public static Errors processApiError(String message,int code){
+
+    public static Errors processApiError(String message, int code) {
         Errors errors = new Errors();
         errors.setInternalErrors(message, code);
         return errors;
     }
-    
-}
 
+    public static String generateSixDigitUniqueNumber() {
+        Random rnd = new Random();
+        int n = 100000 + rnd.nextInt(900000);
+        return String.valueOf(n);
+    }
+
+    public static boolean isEmpty(List<String> str) {
+        if (str == null || str.size() <= 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNull(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNull(Integer integer) {
+        if (integer == null || integer.intValue() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNull(Long value) {
+        if (value == null || value.longValue() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNull(BigDecimal number) {
+        if (number == null || number.equals(new BigDecimal(0))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNull(byte[] byteData) {
+        if (byteData == null || byteData.length == 0) {
+            return true;
+        }
+        return false;
+    }
+
+}

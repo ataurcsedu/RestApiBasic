@@ -61,7 +61,7 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProvider()).jdbcAuthentication().dataSource(dataSource)
-                .usersByUsernameQuery("select username,password, enabled from users_info where username=?")
+                .usersByUsernameQuery("select username,password, enabled from user where username=?")
                 .authoritiesByUsernameQuery("select username, role from user_roles where username=?");
 
     }

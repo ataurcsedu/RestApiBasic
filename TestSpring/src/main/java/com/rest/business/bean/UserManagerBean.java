@@ -10,6 +10,7 @@ import com.rest.business.user.entity.UserSummary;
 import com.rest.database.bean.IUserEntityManager;
 import com.rest.database.bean.UserEntityManagerBean;
 import com.rest.database.entity.User;
+import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;
@@ -37,7 +38,7 @@ public class UserManagerBean implements IUserManager {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public GetUserServiceResponse getUsers(Long startIndex, Long limit, UserBO userBO) {
+    public Object getUsers(Long startIndex, Long limit, UserBO userBO) {
         GetUserServiceResponse response = new GetUserServiceResponse();
         List<UserSummary> userList = new ArrayList<UserSummary>();
         try {
@@ -68,7 +69,9 @@ public class UserManagerBean implements IUserManager {
                     user.setUserName((String) objArr[3]);
                     user.setFullName((String) objArr[4]);
                     user.setDob((String) objArr[5]);
-                    user.setStatus((String) objArr[6]);
+                    user.setCode((String) objArr[6]);
+                    user.setSex((String) objArr[7]);
+                    user.setStatus((String) objArr[8]);
 
                     userList.add(user);
                 }
@@ -85,7 +88,7 @@ public class UserManagerBean implements IUserManager {
             response.getOperationResult().setSuccess(false);
             response.getOperationResult().setErrorList(Arrays.asList(t.getMessage()));
         }
-        return response;
+        return userList;
     }
 
     @Override
@@ -114,7 +117,9 @@ public class UserManagerBean implements IUserManager {
                     userSummary.setUserName((String) objArr[3]);
                     userSummary.setFullName((String) objArr[4]);
                     userSummary.setDob((String) objArr[5]);
-                    userSummary.setStatus((String) objArr[6]);
+                    userSummary.setCode((String) objArr[6]);
+                    userSummary.setSex((String) objArr[7]);
+                    userSummary.setStatus((String) objArr[8]);
                     user = userSummary;
                 }
             }
@@ -131,77 +136,148 @@ public class UserManagerBean implements IUserManager {
     }
 
     @Override
-    public Object createUser(UserBO user) {
+    public Object createUser(UserBO user,String role) {
         UserSummary userSummary = new UserSummary();
         com.rest.database.entity.User userEO = new com.rest.database.entity.User();
         String password = passwordEncoder.encode(user.getPassword());
         userEO.setUsername(user.getUserName());
         userEO.setPassword(password);
         userEO.setFullname(user.getFullName());
-        userEO.setStatus(Defs.STATUS_ACTIVE);
+        userEO.setStatus(Defs.STATUS_INACTIVE);
+        userEO.setEnabled(0);
         userEO.setEmail(user.getEmail());
-        userEO.setCode("abjap");
+        userEO.setCode(Utils.generateSixDigitUniqueNumber());
         userEO.setMobile(user.getMobile());
+        if (user.getSex() != null) {
+            userEO.setSex(user.getSex().equalsIgnoreCase("1") ? Defs.USER_SEX_MALE : Defs.USER_SEX_FEMALE);
+        }
+
         userEO.setDob(user.getDob());
         Date date = new Date();
         userEO.setCreationDate(date);
         userEO.setLastUpdateDate(date);
         userEO.setCreatedBy(Defs.CREATED_BY_USER);
         userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
+        //if(Utils.isEmpty(role)){
+            role = Defs.ROLE_USER;
+        //}
         try {
-            Object object = userEntityService.createUser(userEO);
-            if(object!=null && object instanceof User){
-                User u = (User)object;
+            Object object = userEntityService.createUser(userEO,role);
+            if (object != null && object instanceof User) {
+                User u = (User) object;
                 userSummary.setId(u.getId());
                 userSummary.setMobile(u.getMobile());
                 userSummary.setEmail(u.getEmail());
                 userSummary.setUserName(u.getUsername());
                 userSummary.setFullName(u.getFullname());
                 userSummary.setDob(u.getDob());
+                userSummary.setSex(u.getSex());
                 userSummary.setCode(u.getCode());
                 userSummary.setStatus(u.getStatus());
             }
         } catch (ServiceException e) {
             return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
+        }
+        return userSummary;
+    }
+
+    @Override
+    public Object updateUser(UserBO user, int id) {
+        UserSummary userSummary = new UserSummary();
+        com.rest.database.entity.User userEO = new com.rest.database.entity.User();
+        Object uobj = null;
+        try {
+            uobj = userEntityService.findOne(id);
+        } catch (ServiceException e) {
+            return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
+        }
+
+        if (uobj != null || uobj instanceof User) {
+            userEO = (User) uobj;
+            String password = passwordEncoder.encode(user.getPassword());
+            //userEO.setId(user.getId());
+            userEO.setUsername(user.getUserName());
+            userEO.setPassword(password);
+            userEO.setFullname(user.getFullName());
+            userEO.setEmail(user.getEmail());
+            userEO.setCode(Utils.generateSixDigitUniqueNumber());
+            userEO.setMobile(user.getMobile());
+            userEO.setDob(user.getDob());
+            Date date = new Date();
+            userEO.setCreationDate(date);
+            userEO.setLastUpdateDate(date);
+            userEO.setCreatedBy(Defs.CREATED_BY_USER);
+            userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
+            
+            try {
+                Object object = userEntityService.updateUser(userEO);
+                if (object != null && object instanceof User) {
+                    User u = (User) object;
+                    userSummary.setId(u.getId());
+                    userSummary.setMobile(u.getMobile());
+                    userSummary.setEmail(u.getEmail());
+                    userSummary.setUserName(u.getUsername());
+                    userSummary.setFullName(u.getFullname());
+                    userSummary.setDob(u.getDob());
+                    userSummary.setCode(u.getCode());
+                    userSummary.setStatus(u.getStatus());
+                }
+            } catch (ServiceException e) {
+                return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
+            }
+        }
+        if(uobj == null){
+            return Utils.processApiError("No Entity exist with the id : "+id, Defs.ERROR_CODE_GET);
         }
         return userSummary;
     }
     
+    
     @Override
-    public Object updateUser(UserBO user,int id) {
+    public UserSummary activateUser(int id) throws ServiceException {
         UserSummary userSummary = new UserSummary();
         com.rest.database.entity.User userEO = new com.rest.database.entity.User();
-        String password = passwordEncoder.encode(user.getPassword());
-        userEO.setId(user.getId());
-        userEO.setUsername(user.getUserName());
-        userEO.setPassword(password);
-        userEO.setFullname(user.getFullName());
-        userEO.setStatus(Defs.STATUS_ACTIVE);
-        userEO.setEmail(user.getEmail());
-        userEO.setCode("abjap");
-        userEO.setMobile(user.getMobile());
-        userEO.setDob(user.getDob());
-        Date date = new Date();
-        userEO.setCreationDate(date);
-        userEO.setLastUpdateDate(date);
-        userEO.setCreatedBy(Defs.CREATED_BY_USER);
-        userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
+        Object uobj = null;
         try {
-            Object object = userEntityService.updateUser(userEO,id);
-            if(object!=null && object instanceof User){
-                User u = (User)object;
-                userSummary.setId(u.getId());
-                userSummary.setMobile(u.getMobile());
-                userSummary.setEmail(u.getEmail());
-                userSummary.setUserName(u.getUsername());
-                userSummary.setFullName(u.getFullname());
-                userSummary.setDob(u.getDob());
-                userSummary.setCode(u.getCode());
-                userSummary.setStatus(u.getStatus());
+            uobj = userEntityService.findOne(id);
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage(),Defs.ERROR_CODE_GET);
+        }
+
+        if (uobj != null || uobj instanceof User) {
+            userEO = (User) uobj;
+            
+            userEO.setStatus(Defs.STATUS_ACTIVE);
+            userEO.setEnabled(1);
+            Date date = new Date();
+            //userEO.setCreationDate(date);
+            userEO.setLastUpdateDate(date);
+            //userEO.setCreatedBy(Defs.CREATED_BY_USER);
+            userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
+            
+            try {
+                Object object = userEntityService.updateUser(userEO);
+                if (object != null && object instanceof User) {
+                    User u = (User) object;
+                    userSummary.setId(u.getId());
+                    userSummary.setMobile(u.getMobile());
+                    userSummary.setEmail(u.getEmail());
+                    userSummary.setUserName(u.getUsername());
+                    userSummary.setFullName(u.getFullname());
+                    userSummary.setDob(u.getDob());
+                    userSummary.setCode(u.getCode());
+                    userSummary.setStatus(u.getStatus());
+                }
+            } catch (ServiceException e) {
+                throw new ServiceException(e.getErrorMessage(), e.getErrorCode());
             }
-        } catch (ServiceException e) {
-            return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
+        }
+        if(uobj == null){
+            throw new ServiceException("No Entity exist with the id : "+id, Defs.ERROR_CODE_GET);
         }
         return userSummary;
     }
+    
+    
+    
 }

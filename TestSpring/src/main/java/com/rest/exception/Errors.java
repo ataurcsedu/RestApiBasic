@@ -29,7 +29,7 @@ public class Errors {
  
     //Getter is omitted.
 
-    public List<FieldErrorDTO> getFieldErrors() {
+    public List<FieldErrorDTO> getErrors() {
         return errors;
     }
 

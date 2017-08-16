@@ -39,6 +39,10 @@ public class UserBO implements Serializable{
     @NotNull
     private String dob;
     
+    @NotBlank
+    @NotNull
+    private String sex;
+    
     private String status;
     
     public UserBO(){
@@ -108,6 +112,14 @@ public class UserBO implements Serializable{
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
     
     

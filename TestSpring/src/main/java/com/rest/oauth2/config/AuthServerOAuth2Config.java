@@ -50,8 +50,8 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
             .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
             .scopes("read", "write", "trust").resourceIds(RESOURCE_ID)
             .secret("P@ssw0rd")
-            .accessTokenValiditySeconds(120).//invalid after 2 minutes.
-            refreshTokenValiditySeconds(600);//refresh after 10 minutes.
+            .accessTokenValiditySeconds(1200).//invalid after 20 minutes.
+            refreshTokenValiditySeconds(1800);//refresh after 30 minutes.
 	}
 
 	@Override

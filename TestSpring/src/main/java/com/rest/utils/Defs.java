@@ -16,6 +16,8 @@ public class Defs {
     public static final String CREATED_BY_USER = "USER";
     public static final String STATUS_INACTIVE = "INACTIVE";
     
+    public static final String DB_DATE_FORMAT = "yyyy-MM-dd";
+    
     
     
     public static final String ROLE_USER = "ROLE_USER";

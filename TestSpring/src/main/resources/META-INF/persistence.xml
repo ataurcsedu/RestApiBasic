@@ -3,15 +3,15 @@
   <persistence-unit name="EMPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.rest.oauth2.entity.UserRoles</class>
-    
     <class>com.rest.database.entity.User</class>
+    <class>com.rest.database.entity.House</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/springrestsampledb"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="civs"/>
-<!--      <property name="eclipselink.ddl-generation" value="create-tables"/>-->
+      <!--      <property name="eclipselink.ddl-generation" value="create-tables"/>-->
     </properties>
   </persistence-unit>
 </persistence>

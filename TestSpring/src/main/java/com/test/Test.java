@@ -5,6 +5,10 @@
  */
 package com.test;
 
+import java.util.Calendar;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -27,9 +31,12 @@ public class Test {
 		i++;
 	}*/
       
-    int a= 0123;
-    int b = 0345;
-      System.out.println("Result is:"+(a+b));
+    Calendar next = Calendar.getInstance();
+        next.clear();
+        next.set(YEAR, next.get(YEAR));
+        next.set(MONTH, next.get(MONTH) + 1);
+        next.set(DAY_OF_MONTH, 1); // optional, default: 1, our need
+        System.out.println(next.getTime());
    
 
   }

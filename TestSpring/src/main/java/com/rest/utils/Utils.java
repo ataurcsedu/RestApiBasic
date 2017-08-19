@@ -26,7 +26,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import static java.text.DateFormat.getInstance;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -40,6 +46,8 @@ import javax.swing.JOptionPane;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.FieldError;
 
 /**
@@ -132,6 +140,24 @@ public class Utils {
         }
         value = value.replaceAll("'", "");
         return colName + " = '" + value + "' AND ";
+        //return " UPPER(" + colName + ") = '" + value.toUpperCase() + "' AND ";
+    }
+
+    public static String buildLessThanOrEqualQuery(String colName, String value) {
+        if (Utils.isEmpty(colName) || Utils.isEmpty(value)) {
+            return "";
+        }
+        value = value.replaceAll("'", "");
+        return colName + " <= '" + value + "' AND ";
+        //return " UPPER(" + colName + ") = '" + value.toUpperCase() + "' AND ";
+    }
+
+    public static String buildLessThanOrEqualDateQuery(String colName, String date) {
+        if (Utils.isEmpty(colName) || Utils.isEmpty(date)) {
+            return "";
+        }
+        date = date.replaceAll("'", "");
+        return "DATE("+colName + ") <= '" + date + "' AND ";
         //return " UPPER(" + colName + ") = '" + value.toUpperCase() + "' AND ";
     }
 
@@ -329,6 +355,7 @@ public class Utils {
 
     public static void main(String[] args) {
         System.out.println("result is " + is_validate_telephone(null));
+        
     }
 
     public static Errors processApiError(List<FieldError> fieldError, HttpServletResponse resp) {
@@ -400,4 +427,20 @@ public class Utils {
         return false;
     }
 
+
+    public static Date getNextMonthFirstDay(){
+        Calendar next = Calendar.getInstance();
+        next.set(YEAR, next.get(YEAR));
+        next.set(MONTH, next.get(MONTH) + 1);
+        next.set(DAY_OF_MONTH, 1); // optional, default: 1, our need
+        return next.getTime();
+    }
+    
+    public static String getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null){
+            return authentication.getName();
+        }
+        return Defs.CREATED_BY_USER;
+    }
 }

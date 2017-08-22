@@ -9,6 +9,7 @@ import com.rest.business.house.entity.HouseBO;
 import com.rest.business.house.entity.HouseSummary;
 import com.rest.database.bean.IHouseEntityManager;
 import com.rest.database.entity.House;
+import com.rest.database.entity.User;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;
@@ -18,6 +19,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +37,7 @@ public class HouseManagerBean implements IHouseManager{
     
     
     @Override
-    public Object getHouseByCriteria(Long startIndex, Long limit, HouseBO houseBO) {
+    public Object getHouseByCriteria(Long startIndex, Long limit, HouseSummary houseBO) {
         
         List<HouseSummary> houseList = new ArrayList<HouseSummary>();
         try {
@@ -54,9 +57,15 @@ public class HouseManagerBean implements IHouseManager{
             if(houseBO.getRentType() > 0){
                 where += Utils.buildEqualQuery("h.rent_type", String.valueOf(houseBO.getRentType()));
             }
-            where += Utils.buildLessThanOrEqualQuery("h.person_count", houseBO.getPersonCount());
-            where += Utils.buildLessThanOrEqualQuery("h.rent_cost", houseBO.getRentCost());
-            where += Utils.buildLessThanOrEqualDateQuery("h.fromDate", houseBO.getFromDate());
+            if(houseBO.getPersonCount() > 0){
+                where += Utils.buildLessThanOrEqualQuery("h.person_count", String.valueOf(houseBO.getPersonCount()));
+            }
+            if(houseBO.getRentCost() > 0){
+                where += Utils.buildLessThanOrEqualQuery("h.rent_cost", String.valueOf(houseBO.getRentCost()));
+            }
+            if(!Utils.isEmpty(houseBO.getFromDate())){
+                where += Utils.buildLessThanOrEqualDateQuery("h.fromDate", houseBO.getFromDate());
+            }
 
             Object object = houseEntityService.getHouseByCriteria(startIndex.intValue(), limit.intValue(), where);
 
@@ -74,7 +83,8 @@ public class HouseManagerBean implements IHouseManager{
                     house.setPersonCount((Integer) objArr[5]);
                     house.setRentCost((Integer) objArr[6]);
                     house.setDescription((String) objArr[7]);
-                    house.setFromDate((Date) objArr[8]);
+                    Date date = (Date)objArr[8];
+                    house.setFromDate(Utils.getDateToString(date));
                     house.setPublished((Integer) objArr[9]);
 
                     houseList.add(house);
@@ -93,7 +103,7 @@ public class HouseManagerBean implements IHouseManager{
     @Override
     public Object getHouseById(int houseId) {
         
-        HouseSummary user = new HouseSummary();
+        HouseSummary house = new HouseSummary();
         try {
             
             Object object = houseEntityService.findOne(houseId);
@@ -102,7 +112,7 @@ public class HouseManagerBean implements IHouseManager{
                 List<Object> list = (List<Object>) object;
                 for (Object obj : list) {
                     Object[] objArr = (Object[]) obj;
-                    HouseSummary house = new HouseSummary();
+                    
 
                     house.setId((Integer) objArr[0]);
                     house.setArea((String) objArr[1]);
@@ -112,7 +122,7 @@ public class HouseManagerBean implements IHouseManager{
                     house.setPersonCount((Integer) objArr[5]);
                     house.setRentCost((Integer) objArr[6]);
                     house.setDescription((String) objArr[7]);
-                    house.setFromDate((Date) objArr[8]);
+                    house.setFromDate((String) objArr[8]);
                     house.setPublished((Integer) objArr[9]);
                 }
             }
@@ -122,7 +132,41 @@ public class HouseManagerBean implements IHouseManager{
         } catch (Throwable t) {
             return Utils.processApiError(t.getMessage(), Defs.ERROR_CODE_GET);
         }
-        return user;
+        return house;
+    }
+    
+    
+    @Override
+    public Object publishedAdd(User user,String houseId) {
+        
+        House house = null;
+        try {
+            
+            Object object = houseEntityService.findOne(Integer.parseInt(houseId));
+
+            if (object != null) {
+                house = (House)object;
+            }
+
+        } catch (ServiceException se) {
+            return Utils.processApiError(se.getErrorMessage(), Defs.ERROR_CODE_GET);
+        } catch (Throwable t) {
+            return Utils.processApiError(t.getMessage(), Defs.ERROR_CODE_GET);
+        }
+        
+        com.rest.business.house.entity.UserHouse u = new com.rest.business.house.entity.UserHouse();
+        u.setUserId(user);
+        u.setHouseId(house);
+        u.setStatus(Defs.STATUS_INACTIVE);
+        Object uh = null;
+        try {
+            uh = houseEntityService.publishedAdd(u);
+        } catch (ServiceException ex) {
+            return Utils.processApiError(ex.getErrorMessage(), Defs.ERROR_CODE_INSERT);
+        }
+        if(uh!=null){
+            return uh;
+        }else return Utils.processApiError("Unexpected error occured.", Defs.ERROR_CODE_INSERT);
     }
     
     
@@ -133,15 +177,17 @@ public class HouseManagerBean implements IHouseManager{
         houseEO.setArea(houseBO.getArea());
         houseEO.setRoadNo(houseBO.getRoadNo());
         houseEO.setHouseNo(houseBO.getHouseNo());
-        houseEO.setRentType(houseBO.getRentType());
-        if(Utils.isEmpty(houseBO.getPersonCount())){
+        if(houseBO.getRentType()!=null){
+            houseEO.setRentType(houseBO.getRentType().intValue());
+        }
+        if(!Utils.isEmpty(houseBO.getPersonCount())){
             houseEO.setPersonCount(Integer.parseInt(houseBO.getPersonCount()));
         }
-        if(Utils.isEmpty(houseBO.getRentCost())){
+        if(!Utils.isEmpty(houseBO.getRentCost())){
             houseEO.setRentCost(Integer.parseInt(houseBO.getRentCost()));
         }
         houseEO.setDescription(houseBO.getDescription());
-        if(Utils.isEmpty(houseBO.getFromDate())){
+        if(!Utils.isEmpty(houseBO.getFromDate())){
             houseEO.setFromDate(Utils.getNextMonthFirstDay());
         }else{
             try{
@@ -152,8 +198,9 @@ public class HouseManagerBean implements IHouseManager{
         }
         
         
-
-        houseEO.setPublished(houseBO.getPublished());
+        if(houseBO.getPublished()!=null){
+            houseEO.setPublished(houseBO.getPublished().intValue());
+        }
         Date date = new Date();
         houseEO.setCreationDate(date);
         houseEO.setLastUpdatedDate(date);
@@ -174,7 +221,7 @@ public class HouseManagerBean implements IHouseManager{
                 house.setPersonCount(h.getPersonCount());
                 house.setRentCost(h.getRentCost());
                 house.setDescription(h.getDescription());
-                house.setFromDate(h.getFromDate());
+                house.setFromDate(Utils.getDateToString(h.getFromDate()));
                 house.setPublished(h.getPublished());
             }
         } catch (ServiceException e) {

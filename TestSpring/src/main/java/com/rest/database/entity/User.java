@@ -5,8 +5,10 @@
  */
 package com.rest.database.entity;
 
+import com.rest.business.house.entity.UserHouse;
 import com.rest.oauth2.entity.UserRoles;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -17,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,6 +27,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -50,6 +55,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findByLastUpdatedBy", query = "SELECT u FROM User u WHERE u.lastUpdatedBy = :lastUpdatedBy"),
     @NamedQuery(name = "User.findByLastUpdateDate", query = "SELECT u FROM User u WHERE u.lastUpdateDate = :lastUpdateDate")})
 public class User implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Collection<UserHouse> userHouseCollection;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private UserRoles userRoles;
     private static final long serialVersionUID = 1L;
@@ -302,6 +309,16 @@ public class User implements Serializable {
 
     public void setUserRoles(UserRoles userRoles) {
         this.userRoles = userRoles;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UserHouse> getUserHouseCollection() {
+        return userHouseCollection;
+    }
+
+    public void setUserHouseCollection(Collection<UserHouse> userHouseCollection) {
+        this.userHouseCollection = userHouseCollection;
     }
     
 }

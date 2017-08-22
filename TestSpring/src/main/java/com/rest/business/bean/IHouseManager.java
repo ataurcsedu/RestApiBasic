@@ -6,6 +6,8 @@
 package com.rest.business.bean;
 
 import com.rest.business.house.entity.HouseBO;
+import com.rest.business.house.entity.HouseSummary;
+import com.rest.database.entity.User;
 
 /**
  *
@@ -14,5 +16,6 @@ import com.rest.business.house.entity.HouseBO;
 public interface IHouseManager {
     public Object createHouse(HouseBO houseBO,String role);
     public Object getHouseById(int id);
-    public Object getHouseByCriteria(Long startIndex, Long limit,HouseBO houseBO);
+    public Object getHouseByCriteria(Long startIndex, Long limit,HouseSummary houseBO);
+    public Object publishedAdd(User user,String houseId);
 }

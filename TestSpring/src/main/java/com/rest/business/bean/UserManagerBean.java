@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 public class UserManagerBean implements IUserManager {
 
     @Autowired
-    IUserEntityManager userEntityService;
+    private IUserEntityManager userEntityService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -136,7 +136,34 @@ public class UserManagerBean implements IUserManager {
     }
 
     @Override
-    public Object createUser(UserBO user,String role) {
+    public User getUser(String userName, String password) {
+        GetUserServiceResponse response = new GetUserServiceResponse();
+        User userEO = null;
+        try {
+
+            //UserEntityManagerBean umb = new UserEntityManagerBean();
+            String where = "";
+
+            where += Utils.buildEqualQuery("u.username", userName);
+            where += Utils.buildEqualQuery("u.password", password);
+            where += Utils.buildEqualQuery("u.status", "ACTIVE");
+
+            userEO = userEntityService.getUser(where);
+
+            
+            response.getOperationResult().setSuccess(true);
+        } catch (ServiceException se) {
+            response.getOperationResult().setSuccess(false);
+            response.getOperationResult().setErrorList(Arrays.asList(se.getErrorMessage()));
+        } catch (Throwable t) {
+            response.getOperationResult().setSuccess(false);
+            response.getOperationResult().setErrorList(Arrays.asList(t.getMessage()));
+        }
+        return userEO;
+    }
+
+    @Override
+    public Object createUser(UserBO user, String role) {
         UserSummary userSummary = new UserSummary();
         com.rest.database.entity.User userEO = new com.rest.database.entity.User();
         String password = passwordEncoder.encode(user.getPassword());
@@ -149,7 +176,7 @@ public class UserManagerBean implements IUserManager {
         userEO.setCode(Utils.generateSixDigitUniqueNumber());
         userEO.setMobile(user.getMobile());
         if (user.getSex() != null) {
-            userEO.setSex(user.getSex().equalsIgnoreCase("1") ? Defs.USER_SEX_MALE : Defs.USER_SEX_FEMALE);
+            userEO.setSex(user.getSex());
         }
 
         userEO.setDob(user.getDob());
@@ -159,10 +186,10 @@ public class UserManagerBean implements IUserManager {
         userEO.setCreatedBy(Defs.CREATED_BY_USER);
         userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
         //if(Utils.isEmpty(role)){
-            role = Defs.ROLE_USER;
+        role = Defs.ROLE_USER;
         //}
         try {
-            Object object = userEntityService.createUser(userEO,role);
+            Object object = userEntityService.createUser(userEO, role);
             if (object != null && object instanceof User) {
                 User u = (User) object;
                 userSummary.setId(u.getId());
@@ -208,7 +235,7 @@ public class UserManagerBean implements IUserManager {
             userEO.setLastUpdateDate(date);
             userEO.setCreatedBy(Defs.CREATED_BY_USER);
             userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
-            
+
             try {
                 Object object = userEntityService.updateUser(userEO);
                 if (object != null && object instanceof User) {
@@ -220,19 +247,19 @@ public class UserManagerBean implements IUserManager {
                     userSummary.setFullName(u.getFullname());
                     userSummary.setDob(u.getDob());
                     userSummary.setCode(u.getCode());
+                    userSummary.setSex(u.getSex());
                     userSummary.setStatus(u.getStatus());
                 }
             } catch (ServiceException e) {
                 return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
             }
         }
-        if(uobj == null){
-            return Utils.processApiError("No Entity exist with the id : "+id, Defs.ERROR_CODE_GET);
+        if (uobj == null) {
+            return Utils.processApiError("No Entity exist with the id : " + id, Defs.ERROR_CODE_GET);
         }
         return userSummary;
     }
-    
-    
+
     @Override
     public UserSummary activateUser(int id) throws ServiceException {
         UserSummary userSummary = new UserSummary();
@@ -241,12 +268,12 @@ public class UserManagerBean implements IUserManager {
         try {
             uobj = userEntityService.findOne(id);
         } catch (Exception e) {
-            throw new ServiceException(e.getMessage(),Defs.ERROR_CODE_GET);
+            throw new ServiceException(e.getMessage(), Defs.ERROR_CODE_GET);
         }
 
         if (uobj != null || uobj instanceof User) {
             userEO = (User) uobj;
-            
+
             userEO.setStatus(Defs.STATUS_ACTIVE);
             userEO.setEnabled(1);
             Date date = new Date();
@@ -254,7 +281,7 @@ public class UserManagerBean implements IUserManager {
             userEO.setLastUpdateDate(date);
             //userEO.setCreatedBy(Defs.CREATED_BY_USER);
             userEO.setLastUpdatedBy(Defs.CREATED_BY_USER);
-            
+
             try {
                 Object object = userEntityService.updateUser(userEO);
                 if (object != null && object instanceof User) {
@@ -272,12 +299,10 @@ public class UserManagerBean implements IUserManager {
                 throw new ServiceException(e.getErrorMessage(), e.getErrorCode());
             }
         }
-        if(uobj == null){
-            throw new ServiceException("No Entity exist with the id : "+id, Defs.ERROR_CODE_GET);
+        if (uobj == null) {
+            throw new ServiceException("No Entity exist with the id : " + id, Defs.ERROR_CODE_GET);
         }
         return userSummary;
     }
-    
-    
-    
+
 }

@@ -5,6 +5,7 @@
     <class>com.rest.oauth2.entity.UserRoles</class>
     <class>com.rest.database.entity.User</class>
     <class>com.rest.database.entity.House</class>
+    <class>com.rest.business.house.entity.UserHouse</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/springrestsampledb"/>

@@ -11,6 +11,7 @@ import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,18 +67,22 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
     }
 
     @Override
-    public Object getUser(String where) {
+    public User getUser(String where) {
         EntityManager em = null;
         em = getEntityManager();
         where += " 1=1";
 
-        String query = "select u.id, u.mobile, u.email, u.username, u.fullname, u.dob,u.code, u.sex, u.status from User u where " + where;
+        String query = "select u.id, u.mobile, u.email, u.username, u.fullname, u.dob,u.code, u.sex, u.status from user u where " + where;
         System.out.println("QUERY= " + query);
-        Query selectQuery = em.createQuery(query);
+        Query selectQuery = em.createNativeQuery(query,User.class);
 
         writeLog();
-
-        return selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).getResultList();
+        List<User> userListEO = selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).getResultList();
+        if(userListEO != null && userListEO.size() >0) {
+            return userListEO.get(0);
+        }
+        
+        return null;
     }
 
     @Override

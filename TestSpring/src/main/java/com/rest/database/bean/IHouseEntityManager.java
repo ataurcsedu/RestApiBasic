@@ -5,6 +5,7 @@
  */
 package com.rest.database.bean;
 
+import com.rest.business.house.entity.UserHouse;
 import com.rest.database.entity.House;
 import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
@@ -28,6 +29,7 @@ public interface IHouseEntityManager {
     public Object getHouseByCriteria(int startIndex, int limit, String where) throws ServiceException;
     public Object findOne(int id) throws ServiceException;
     public Object createHouse(House house) throws ServiceException;
+    public Object publishedAdd(UserHouse u) throws ServiceException;
     
     
     

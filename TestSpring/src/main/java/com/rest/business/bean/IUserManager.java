@@ -7,6 +7,7 @@ package com.rest.business.bean;
 
 import com.rest.business.user.entity.UserBO;
 import com.rest.business.user.entity.UserSummary;
+import com.rest.database.entity.User;
 import com.rest.exception.ServiceException;
 import com.rest.ws.response.GetUserServiceResponse;
 import org.springframework.stereotype.Component;
@@ -22,5 +23,6 @@ public interface IUserManager {
     public Object createUser(UserBO user,String role);
     public Object updateUser(UserBO user,int id);
     public UserSummary getUser(String userId);
+    public User getUser(String userName,String password);
     public UserSummary activateUser(int userId)throws ServiceException;
 }

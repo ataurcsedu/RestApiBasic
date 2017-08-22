@@ -34,9 +34,6 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
     private ClientDetailsService clientService;
     
     @Autowired
-    private UserDetailsService userDetailService;
-
-    @Autowired
     DataSource dataSource;
     
 
@@ -60,7 +57,7 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authProvider()).jdbcAuthentication().dataSource(dataSource)
+        auth.eraseCredentials(false).authenticationProvider(authProvider()).jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery("select username,password, enabled from user where username=?")
                 .authoritiesByUsernameQuery("select username, role from user_roles where username=?");
 

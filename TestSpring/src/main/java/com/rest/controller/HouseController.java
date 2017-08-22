@@ -49,12 +49,13 @@ public class HouseController {
     @ResponseBody
     public Object getHouse(HttpServletRequest req,@RequestParam(value = "offset", defaultValue = "0") long index,
             @RequestParam(value = "limit", defaultValue = "10") long limit,
-            HttpServletResponse response, @ModelAttribute HouseBO house, BindingResult result) {
+            HttpServletResponse response, @ModelAttribute HouseSummary house, BindingResult result) {
         
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
         }
         Object object = houseService.getHouseByCriteria(index, limit, house);
+        Integer userId = Utils.getCurrentUserId();
         return object;
     }
     

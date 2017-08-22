@@ -24,9 +24,9 @@ public class HouseBO {
     @NotNull
     @Size(min = 1)
     private String houseNo;
-    @NotNull
-    @Size(min = 1)
-    private int rentType;
+    
+    private Integer rentType;
+    
     @NotNull
     @Size(min = 1)
     private String personCount;
@@ -39,9 +39,9 @@ public class HouseBO {
     @NotNull
     @Size(min = 1)
     private String fromDate;
+    
     @NotNull
-    @Size(min = 1)
-    private int published;
+    private Integer published;
     
     private String createdBy;
     private String creationDate;
@@ -85,13 +85,15 @@ public class HouseBO {
         this.houseNo = houseNo;
     }
 
-    public int getRentType() {
+    public Integer getRentType() {
         return rentType;
     }
 
-    public void setRentType(int rentType) {
+    public void setRentType(Integer rentType) {
         this.rentType = rentType;
     }
+
+
 
 
 
@@ -159,13 +161,14 @@ public class HouseBO {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 
-    public int getPublished() {
+    public Integer getPublished() {
         return published;
     }
 
-    public void setPublished(int published) {
+    public void setPublished(Integer published) {
         this.published = published;
     }
+
     
     
     

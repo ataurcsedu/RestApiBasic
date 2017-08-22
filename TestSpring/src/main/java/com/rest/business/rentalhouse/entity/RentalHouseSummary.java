@@ -3,37 +3,52 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rest.business.house.entity;
-
-import java.util.Date;
+package com.rest.business.rentalhouse.entity;
 
 /**
  *
  * @author Ataur Rahman
  */
-public class HouseSummary {
-    
-    private int id;
+public class RentalHouseSummary {
+    private Integer userId;
+    private String fullName;
+    private String mobile;
     private String area;
     private String roadNo;
     private String houseNo;
-    private int rentType;
-    private int personCount;
-    private int rentCost;
+    private Integer rentType;
+    private Integer personCount;
+    private Integer rentCost;
     private String description;
     private String fromDate;
-    private int published;
     
-    public HouseSummary(){
+    public RentalHouseSummary(){
         
     }
 
-    public int getId() {
-        return id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public String getArea() {
@@ -61,49 +76,12 @@ public class HouseSummary {
     }
 
     
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-
-
-
-
-    public int getRentType() {
-        return rentType;
-    }
-
-    public void setRentType(int rentType) {
-        this.rentType = rentType;
-    }
-
-    public int getPersonCount() {
-        return personCount;
-    }
-
-    public void setPersonCount(int personCount) {
-        this.personCount = personCount;
-    }
-
-    public int getRentCost() {
-        return rentCost;
-    }
-
-    public void setRentCost(int rentCost) {
-        this.rentCost = rentCost;
-    }
-
-    public int getPublished() {
-        return published;
-    }
-
-    public void setPublished(int published) {
-        this.published = published;
     }
 
     public String getFromDate() {
@@ -113,7 +91,29 @@ public class HouseSummary {
     public void setFromDate(String fromDate) {
         this.fromDate = fromDate;
     }
-    
-    
+
+    public Integer getRentType() {
+        return rentType;
+    }
+
+    public void setRentType(Integer rentType) {
+        this.rentType = rentType;
+    }
+
+    public Integer getPersonCount() {
+        return personCount;
+    }
+
+    public void setPersonCount(Integer personCount) {
+        this.personCount = personCount;
+    }
+
+    public Integer getRentCost() {
+        return rentCost;
+    }
+
+    public void setRentCost(Integer rentCost) {
+        this.rentCost = rentCost;
+    }
     
 }

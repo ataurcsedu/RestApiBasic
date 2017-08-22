@@ -13,6 +13,7 @@ package com.rest.utils;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.rest.exception.ErrorMessage;
 import com.rest.exception.FieldErrorDTO;
 import com.rest.exception.Errors;
 import java.awt.Graphics2D;
@@ -26,9 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import static java.text.DateFormat.getInstance;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -376,8 +375,16 @@ public class Utils {
     public static Errors processApiError(String message, int code) {
         Errors errors = new Errors();
         errors.setInternalErrors(message, code);
+        
         return errors;
     }
+    
+    public static ErrorMessage processErrorMessage(String message, int code) {
+        ErrorMessage errorMessage = new ErrorMessage(message,code);
+        return errorMessage;
+    }
+    
+    
 
     public static String generateSixDigitUniqueNumber() {
         Random rnd = new Random();
@@ -443,4 +450,14 @@ public class Utils {
         }
         return Defs.CREATED_BY_USER;
     }
+    
+    public static Integer getCurrentUserId(){
+//        MyUserPrincipal authUser = (MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if(authUser != null){
+//            return authUser.getUser().getId();
+//        }
+        return null;
+    }
+    
+    
 }

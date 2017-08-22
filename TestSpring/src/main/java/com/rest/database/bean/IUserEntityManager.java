@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 public interface IUserEntityManager {
     
     public Object getUsers(int startIndex, int limit, String where) throws ServiceException;
-    public Object getUser(String where) throws ServiceException;
+    public User getUser(String where) throws ServiceException;
     public Object findOne(int id) throws ServiceException;
     public Object createUser(User user,String role) throws ServiceException;
     public Object updateUser(User user) throws ServiceException;

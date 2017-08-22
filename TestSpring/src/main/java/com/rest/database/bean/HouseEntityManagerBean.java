@@ -5,6 +5,7 @@
  */
 package com.rest.database.bean;
 
+import com.rest.business.house.entity.UserHouse;
 import com.rest.database.entity.House;
 import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
@@ -57,9 +58,9 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
         em = getEntityManager();
         where += " 1=1";
 
-        String query = "select h.id, h.mobile, h.email, h.username, h.fullname, h.dob,h.code,h.sex, h.status from House h where " + where;
+        String query = "select h.id, h.area, h.road_no, h.house_no, h.rent_type, h.person_count,h.rent_cost,h.description, h.fromDate, h.published from house h where " + where;
         System.out.println("QUERY= " + query);
-        Query selectQuery = em.createQuery(query);
+        Query selectQuery = em.createNativeQuery(query);
 
         writeLog();
 
@@ -97,27 +98,27 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
     
     
 
-    /*@Override
-    public Object updateUser(User user) {
+    @Override
+    public Object publishedAdd(UserHouse u) {
         EntityManager em = null;
         em = getEntityManager();
         try {
             em.getTransaction().begin();
-            em.merge(user);
+            em.persist(u);
             em.getTransaction().commit();
         } catch (NonExistentEntityException ne) {
             em.getTransaction().rollback();
-            return new ServiceException(ne.getMessage(), Defs.ERROR_CODE_UPDATE);
+            return new ServiceException(ne.getMessage(), Defs.ERROR_CODE_INSERT);
         } catch (Throwable t) {
             em.getTransaction().rollback();
-            return new ServiceException(t.getMessage(), Defs.ERROR_CODE_UPDATE);
+            return new ServiceException(t.getMessage(), Defs.ERROR_CODE_INSERT);
         } finally {
             em.clear();
-            writeLog();
+            //writeLog();
         }
 
-        return user;
-    }*/
+        return u;
+    }
 
 
 

@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.test;
 
 import java.util.Calendar;
@@ -19,7 +20,7 @@ public class Test {
 
   public static void main(String[] args) {
 
-	/*int i = 0;
+	int i = 0;
 	while (i < 10) {
 		String password = "sun";
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -29,7 +30,7 @@ public class Test {
                 System.out.println(passwordEncoder.matches(password, hashedPassword));
                 
 		i++;
-	}*/
+	}
       
     Calendar next = Calendar.getInstance();
         next.clear();

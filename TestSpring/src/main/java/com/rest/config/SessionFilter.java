@@ -36,10 +36,12 @@ public class SessionFilter implements Filter{
 
         boolean foundInURL_MENU = false;
         boolean menuPassed = false;
-
+        
 
         if(!response.containsHeader("X-FRAME-OPTIONS"))
             response.addHeader("X-FRAME-OPTIONS", "SAMEORIGIN");
+        
+        
         chain.doFilter(req, res);
     }
 

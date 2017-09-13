@@ -35,8 +35,11 @@ public interface IUserEntityManager {
         Logger LOGGER = Logger.getLogger("<USER > : ");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
-        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
+        //org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
         
+        
+        
+        /*
         Set<String> roles = authentication.getAuthorities()
                 .stream()
                 .map(r -> r.getAuthority()).collect(Collectors.toSet());
@@ -44,6 +47,6 @@ public interface IUserEntityManager {
             LOGGER.log(Level.INFO,"USER NAME "+ authentication.getName()+" ROLES "+Arrays.toString(roles.toArray()));
         }else{
             LOGGER.log(Level.SEVERE,"NO ROLES FOUND FOR USER "+authentication.getName());
-        }
+        }*/
     }
 }

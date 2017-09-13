@@ -100,28 +100,25 @@ public class UserManagerBean implements IUserManager {
             //UserEntityManagerBean umb = new UserEntityManagerBean();
             String where = "";
 
-            where += Utils.buildJPQLLikeQuery("u.id", userId);
-            where += Utils.buildJPQLLikeQuery("u.status", "ACTIVE");
+            where += Utils.buildEqualQuery("u.id", userId);
+            where += Utils.buildEqualQuery("u.status", "ACTIVE");
 
             Object object = userEntityService.getUser(where);
 
             if (object != null) {
-                List<Object> list = (List<Object>) object;
-                for (Object obj : list) {
-                    Object[] objArr = (Object[]) obj;
-                    UserSummary userSummary = new UserSummary();
+                User u = (User) object;
+                UserSummary userSummary = new UserSummary();
 
-                    userSummary.setId((Integer) objArr[0]);
-                    userSummary.setMobile((String) objArr[1]);
-                    userSummary.setEmail((String) objArr[2]);
-                    userSummary.setUserName((String) objArr[3]);
-                    userSummary.setFullName((String) objArr[4]);
-                    userSummary.setDob((String) objArr[5]);
-                    userSummary.setCode((String) objArr[6]);
-                    userSummary.setSex((String) objArr[7]);
-                    userSummary.setStatus((String) objArr[8]);
-                    user = userSummary;
-                }
+                userSummary.setId(u.getId());
+                userSummary.setMobile(u.getMobile());
+                userSummary.setEmail(u.getEmail());
+                userSummary.setUserName(u.getUsername());
+                userSummary.setFullName(u.getFullname());
+                userSummary.setDob(u.getDob());
+                userSummary.setCode(u.getCode());
+                userSummary.setSex(u.getSex());
+                userSummary.setStatus(u.getStatus());
+                user = userSummary;
             }
 
             response.getOperationResult().setSuccess(true);
@@ -150,7 +147,6 @@ public class UserManagerBean implements IUserManager {
 
             userEO = userEntityService.getUser(where);
 
-            
             response.getOperationResult().setSuccess(true);
         } catch (ServiceException se) {
             response.getOperationResult().setSuccess(false);
@@ -221,15 +217,29 @@ public class UserManagerBean implements IUserManager {
 
         if (uobj != null || uobj instanceof User) {
             userEO = (User) uobj;
-            String password = passwordEncoder.encode(user.getPassword());
-            //userEO.setId(user.getId());
-            userEO.setUsername(user.getUserName());
-            userEO.setPassword(password);
-            userEO.setFullname(user.getFullName());
-            userEO.setEmail(user.getEmail());
+            String password = null;
+            if(!Utils.isEmpty(user.getPassword())){
+                password = passwordEncoder.encode(user.getPassword());
+            }
+            if(!Utils.isEmpty(user.getUserName())){
+                userEO.setUsername(user.getUserName());
+            }
+            if(!Utils.isEmpty(password)){
+                userEO.setPassword(password);
+            }
+            if(!Utils.isEmpty(user.getFullName())){
+                userEO.setFullname(user.getFullName());
+            }
+            if(!Utils.isEmpty(user.getEmail())){
+                userEO.setEmail(user.getEmail());
+            }
             userEO.setCode(Utils.generateSixDigitUniqueNumber());
-            userEO.setMobile(user.getMobile());
-            userEO.setDob(user.getDob());
+            if(!Utils.isEmpty(user.getMobile())){
+                userEO.setMobile(user.getMobile());
+            }
+            if(!Utils.isEmpty(user.getDob())){
+                userEO.setDob(user.getDob());
+            }
             Date date = new Date();
             userEO.setCreationDate(date);
             userEO.setLastUpdateDate(date);

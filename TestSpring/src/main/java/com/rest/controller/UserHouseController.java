@@ -5,26 +5,17 @@
  */
 package com.rest.controller;
 
-import static com.google.common.collect.Iterables.limit;
-import static com.google.common.collect.Multimaps.index;
 import com.rest.business.bean.IHouseManager;
 import com.rest.business.bean.IUserManager;
-import com.rest.business.house.entity.HouseSummary;
 import com.rest.business.house.entity.UserHouse;
 import com.rest.business.house.entity.UserHouseBO;
-import com.rest.business.user.entity.UserSummary;
 import com.rest.database.entity.User;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

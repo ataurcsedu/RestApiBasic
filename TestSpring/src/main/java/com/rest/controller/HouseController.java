@@ -8,7 +8,6 @@ package com.rest.controller;
 import com.rest.business.bean.IHouseManager;
 import com.rest.business.house.entity.HouseBO;
 import com.rest.business.house.entity.HouseSummary;
-import com.rest.business.user.entity.UserBO;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  *

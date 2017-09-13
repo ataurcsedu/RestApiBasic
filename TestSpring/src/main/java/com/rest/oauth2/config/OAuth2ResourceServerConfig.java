@@ -25,12 +25,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         
         @Bean
         public TokenStore tokenStore() {
-            /*DataSource tokenDataSource = DataSourceBuilder.create()
-                    .driverClassName(oauthClass)
-                    .username("root")
-                    .password("civs")
-                    .url(oauthUrl)
-                    .build();*/
             return new JdbcTokenStore(dataSource);
         }
         
@@ -53,6 +47,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 		.requestMatchers().antMatchers("/api/**")
 		.and().authorizeRequests()
 		.antMatchers("/api/**").access("hasAnyRole('ADMIN','USER')")
+                .and().antMatcher("/rent/**").anonymous()
 		.and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
 	}
 

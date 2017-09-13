@@ -28,8 +28,6 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
         
         //public static final InMemoryTokenStore tokenStore = new InMemoryTokenStore();
 
-        
-        
 	@Autowired
 	private UserApprovalHandler handler;
 
@@ -42,8 +40,6 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
         
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-
-            
             clients.inMemory()
 	    .withClient("myRestClient") // client id
             .authorizedGrantTypes("password", "authorization_code", "refresh_token", "implicit")
@@ -56,15 +52,13 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-            	endpoints.tokenStore(tokenStore).userApprovalHandler(handler)
-				.authenticationManager(authManager);
+            	endpoints.tokenStore(tokenStore)
+                         .userApprovalHandler(handler)
+			 .authenticationManager(authManager);
 	}
 
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
 		oauthServer.realm(REALM+"/client");
 	}
-        
-        
-
 }

@@ -9,6 +9,10 @@ import com.rest.business.bean.IRentalHouseManager;
 import com.rest.business.house.entity.HouseSummary;
 import com.rest.business.rentalhouse.entity.RentalHouseSummary;
 import com.rest.utils.Utils;
+import com.test.LogMessageProducer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,17 @@ public class RentalInfoController {
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
         }
+        
+        /*try {
+            // this is for test
+            LogMessageProducer.sendMessage();
+        } catch (JMSException ex) {
+            Logger.getLogger(RentalInfoController.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        
+        
+        
+        
         Object object = rentalManager.getRentalInfoByCriteria(index, limit, house);
         if(object instanceof RentalHouseSummary){
             RentalHouseSummary h = (RentalHouseSummary)object;

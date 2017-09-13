@@ -14,22 +14,14 @@ import com.rest.utils.Defs;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
 
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  *
  * @author Ataur Rahman
+ * 
  */
 @RestController
 @RequestMapping(Defs.CONTROLLER_PATH)
@@ -52,11 +45,7 @@ public class UserController {
     @Autowired
     private IUserManager userService;
 
-    /*
-     @Autowired
-     public void setIUserManager(IUserManager userService) {
-     this.userService = userService;
-     }*/
+    
     @RequestMapping(value = "users", method = RequestMethod.GET)
     @ResponseBody
     public Object getUsers(SecurityContextHolderAwareRequestWrapper s, HttpServletRequest req, @RequestParam(value = "offset", defaultValue = "0") long index,
@@ -66,10 +55,9 @@ public class UserController {
         GetUserServiceResponse resp = new GetUserServiceResponse();
         Object object = userService.getUsers(index, limit, new UserBO());
         return object;
-        //}
-
     }
 
+    
     @RequestMapping(value = "users", method = RequestMethod.POST)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -81,10 +69,11 @@ public class UserController {
         return userService.createUser(userBO,Defs.ROLE_USER);
     }
     
-    @RequestMapping(value = "users/{userid}", method = RequestMethod.POST)
+    
+    @RequestMapping(value = "users/{userid}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public Object updateUsers(HttpServletRequest req,HttpServletResponse response, @ModelAttribute UserBO userBO, BindingResult result,
+    public Object updateUsers(HttpServletRequest req,HttpServletResponse response, @RequestBody UserBO userBO, BindingResult result,
             @PathVariable String userid) {
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
@@ -103,7 +92,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "users/activate/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "users/{id}/activate", method = RequestMethod.GET)
     @ResponseBody
     public Object activateUser(HttpServletRequest req, @PathVariable String id) {
         if(!Utils.isEmpty(id)){

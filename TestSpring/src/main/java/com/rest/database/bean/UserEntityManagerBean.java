@@ -9,6 +9,7 @@ import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +52,29 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
         }
     }
 
+    
+    
+    
+    @Override
+    public <T> T findById(Class<T> entityClass, Object id) {
+        EntityManager em = null;
+        em = getEntityManager();
+        return em.find(entityClass, id);
+    }
+
+    @Override
+    public <T> T getReference(Class<T> entityClass, Object id) {
+        try {
+            EntityManager em = null;
+            em = getEntityManager();
+            return em.getReference(entityClass, id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    
+    
     @Override
     public Object getUsers(int startIndex, int limit, String where) {
         EntityManager em = null;
@@ -125,10 +149,10 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
             em.getTransaction().commit();
         } catch (NonExistentEntityException ne) {
             em.getTransaction().rollback();
-            return new ServiceException(ne.getMessage(), Defs.ERROR_CODE_UPDATE);
+            return new ServiceException(ne.getMessage(), ErrorCodes.UPDATE);
         } catch (Throwable t) {
             em.getTransaction().rollback();
-            return new ServiceException(t.getMessage(), Defs.ERROR_CODE_UPDATE);
+            return new ServiceException(t.getMessage(), ErrorCodes.UPDATE);
         } finally {
             em.clear();
             writeLog();
@@ -157,7 +181,7 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
             em = getEntityManager();
             user =  em.find(User.class, id);
         } catch (Exception e) {
-            throw new ServiceException(e.getMessage(), Defs.ERROR_CODE_GET);
+            throw new ServiceException(e.getMessage(), ErrorCodes.GET);
         } finally {
             if (em != null) {
                 em.clear();

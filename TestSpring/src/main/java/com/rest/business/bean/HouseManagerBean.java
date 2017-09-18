@@ -8,10 +8,13 @@ package com.rest.business.bean;
 import com.rest.business.house.entity.HouseBO;
 import com.rest.business.house.entity.HouseSummary;
 import com.rest.database.bean.IHouseEntityManager;
+import com.rest.database.bean.IRentalHouseEntityManager;
 import com.rest.database.entity.House;
 import com.rest.database.entity.User;
+import com.rest.database.entity.UserHouse;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +37,9 @@ public class HouseManagerBean implements IHouseManager{
     
     @Autowired
     IHouseEntityManager houseEntityService;
+    
+    @Autowired
+    IRentalHouseEntityManager rentalService;
     
     
     @Override
@@ -92,9 +98,9 @@ public class HouseManagerBean implements IHouseManager{
             }
 
         } catch (ServiceException se) {
-            return Utils.processApiError(se.getErrorMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processApiError(se.getErrorMessage(), ErrorCodes.GET);
         } catch (Throwable t) {
-            return Utils.processApiError(t.getMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processApiError(t.getMessage(), ErrorCodes.GET);
         }
         return houseList;
     }
@@ -106,31 +112,27 @@ public class HouseManagerBean implements IHouseManager{
         HouseSummary house = new HouseSummary();
         try {
             
-            Object object = houseEntityService.findOne(houseId);
+            House houseEO = houseEntityService.findOne(houseId);
 
-            if (object != null) {
-                List<Object> list = (List<Object>) object;
-                for (Object obj : list) {
-                    Object[] objArr = (Object[]) obj;
+            if (houseEO != null) {
                     
-
-                    house.setId((Integer) objArr[0]);
-                    house.setArea((String) objArr[1]);
-                    house.setRoadNo((String) objArr[2]);
-                    house.setHouseNo((String) objArr[3]);
-                    house.setRentType((Integer) objArr[4]);
-                    house.setPersonCount((Integer) objArr[5]);
-                    house.setRentCost((Integer) objArr[6]);
-                    house.setDescription((String) objArr[7]);
-                    house.setFromDate((String) objArr[8]);
-                    house.setPublished((Integer) objArr[9]);
-                }
+                house.setId(houseEO.getId());
+                house.setArea(houseEO.getArea());
+                house.setRoadNo(houseEO.getRoadNo());
+                house.setHouseNo(houseEO.getHouseNo());
+                house.setRentType(houseEO.getRentType());
+                house.setPersonCount(houseEO.getPersonCount());
+                house.setRentCost(houseEO.getRentCost());
+                house.setDescription(houseEO.getDescription());
+                house.setFromDate(Utils.getDateToString(houseEO.getFromDate()));
+                house.setPublished(houseEO.getPublished());
+                
             }
 
         } catch (ServiceException se) {
-            return Utils.processApiError(se.getErrorMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processApiError(se.getErrorMessage(), ErrorCodes.GET);
         } catch (Throwable t) {
-            return Utils.processApiError(t.getMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processApiError(t.getMessage(), ErrorCodes.GET);
         }
         return house;
     }
@@ -149,12 +151,12 @@ public class HouseManagerBean implements IHouseManager{
             }
 
         } catch (ServiceException se) {
-            return Utils.processApiError(se.getErrorMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processApiError(se.getErrorMessage(), ErrorCodes.GET);
         } catch (Throwable t) {
-            return Utils.processApiError(t.getMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processApiError(t.getMessage(), ErrorCodes.GET);
         }
         
-        com.rest.business.house.entity.UserHouse u = new com.rest.business.house.entity.UserHouse();
+        com.rest.database.entity.UserHouse u = new com.rest.database.entity.UserHouse();
         u.setUserId(user);
         u.setHouseId(house);
         u.setStatus(Defs.STATUS_INACTIVE);
@@ -162,11 +164,11 @@ public class HouseManagerBean implements IHouseManager{
         try {
             uh = houseEntityService.publishedAdd(u);
         } catch (ServiceException ex) {
-            return Utils.processApiError(ex.getErrorMessage(), Defs.ERROR_CODE_INSERT);
+            return Utils.processApiError(ex.getErrorMessage(), ErrorCodes.GET);
         }
         if(uh!=null){
             return uh;
-        }else return Utils.processApiError("Unexpected error occured.", Defs.ERROR_CODE_INSERT);
+        }else return Utils.processApiError("Unexpected error occured.", ErrorCodes.INSERT);
     }
     
     
@@ -228,6 +230,62 @@ public class HouseManagerBean implements IHouseManager{
             return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
         }
         return house;
+    }
+    
+    @Override
+    public Object updateHouse(HouseBO houseBO,Integer userId,Integer houseId){
+        HouseSummary hb = new HouseSummary();
+        if(userId!=null && houseId!=null){
+            Object rentalHouseObject = rentalService.getMinimumOneHouseByUserId(userId, houseId);
+            //UserHouse uh = (UserHouse)rentalHouseObject;
+            if(rentalHouseObject!=null && rentalHouseObject instanceof List ){
+                try {
+                    com.rest.database.entity.House houseEO = new com.rest.database.entity.House();
+                    houseEO = houseEntityService.getReference(com.rest.database.entity.House.class,houseId);
+                    if(!Utils.isEmpty(houseBO.getArea())){
+                        houseEO.setArea(houseBO.getArea());
+                    }
+                    if(!Utils.isEmpty(houseBO.getRoadNo())){
+                        houseEO.setRoadNo(houseBO.getRoadNo());
+                    }
+                    if(!Utils.isEmpty(houseBO.getRoadNo())){
+                        houseEO.setRoadNo(houseBO.getRoadNo());
+                    }
+                    if(!Utils.isEmpty(houseBO.getHouseNo())){
+                        houseEO.setHouseNo(houseBO.getHouseNo());
+                    }
+                    if(houseBO.getRentType()!=null){
+                        houseEO.setRentType(houseBO.getRentType());
+                    }
+                    if(!Utils.isEmpty(houseBO.getPersonCount())){
+                        houseEO.setPersonCount(Integer.parseInt(houseBO.getPersonCount()));
+                    }
+                    if(!Utils.isEmpty(houseBO.getRentCost())){
+                        houseEO.setRentCost(Integer.parseInt(houseBO.getRentCost()));
+                    }
+                    if(!Utils.isEmpty(houseBO.getDescription())){
+                        houseEO.setDescription(houseBO.getDescription());
+                    }
+
+                    if(!Utils.isEmpty(houseBO.getFromDate())){
+                        houseEO.setFromDate(Utils.getStringToDate(houseBO.getFromDate()));
+                    }
+                    
+                    if(houseBO.getPublished()!=null){
+                        houseEO.setPublished(houseBO.getPublished());
+                    }
+                   
+                    houseEO = houseEntityService.updateHouse(houseEO);
+                    hb = hb.getHouseSummaryObject(houseEO);
+                    return hb;
+                } catch (ServiceException ex) {
+                    Logger.getLogger(HouseManagerBean.class.getName()).log(Level.SEVERE, null, ex);
+                } catch(Exception e){
+                    return Utils.processApiError("Invalid Data type for updating house", ErrorCodes.INVALID);
+                }
+            }
+        }
+        return Utils.processApiError("No user / house Found or found invalid data", ErrorCodes.INVALID);
     }
 
 }

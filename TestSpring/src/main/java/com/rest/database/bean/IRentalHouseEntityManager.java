@@ -13,4 +13,5 @@ import com.rest.exception.ServiceException;
  */
 public interface IRentalHouseEntityManager {
     public Object getRentalInfoByCriteria(int startIndex, int limit, String where) throws ServiceException;
+    public Object getMinimumOneHouseByUserId(Integer userId, Integer houseId);
 }

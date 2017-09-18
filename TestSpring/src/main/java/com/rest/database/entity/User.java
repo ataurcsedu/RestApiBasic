@@ -5,7 +5,6 @@
  */
 package com.rest.database.entity;
 
-import com.rest.business.house.entity.UserHouse;
 import com.rest.oauth2.entity.UserRoles;
 import java.io.Serializable;
 import java.util.Collection;

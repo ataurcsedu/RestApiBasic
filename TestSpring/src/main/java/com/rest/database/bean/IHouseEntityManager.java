@@ -5,7 +5,7 @@
  */
 package com.rest.database.bean;
 
-import com.rest.business.house.entity.UserHouse;
+import com.rest.database.entity.UserHouse;
 import com.rest.database.entity.House;
 import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
@@ -26,9 +26,12 @@ import org.springframework.stereotype.Component;
 
 public interface IHouseEntityManager {
     
+    <T> T findById(Class<T> entityClass, Object id);
+    <T> T getReference(Class<T> entityClass, Object id);
     public Object getHouseByCriteria(int startIndex, int limit, String where) throws ServiceException;
-    public Object findOne(int id) throws ServiceException;
+    public House findOne(int id) throws ServiceException;
     public Object createHouse(House house) throws ServiceException;
+    public House updateHouse(House house) throws ServiceException;
     public Object publishedAdd(UserHouse u) throws ServiceException;
     
     

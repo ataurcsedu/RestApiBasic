@@ -5,7 +5,9 @@
  */
 package com.rest.database.bean;
 
+import com.rest.database.entity.UserHouse;
 import com.rest.exception.ServiceException;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -59,5 +61,29 @@ public class RentalHouseEntityManagerBean extends BaseEntityManager implements I
         Query selectQuery = em.createNativeQuery(query);
 
         return selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).setFirstResult(startIndex).setMaxResults(limit).getResultList();
+    }
+    
+    @Override
+    public Object getMinimumOneHouseByUserId(Integer userId, Integer houseId) {
+        EntityManager em = null;
+        em = getEntityManager();
+        
+
+        String query = "SELECT h FROM UserHouse h where h.userId =:user_id and h.houseId =:house_id";
+        // later add where status = ACTIVE
+        System.out.println("QUERY= " + query);
+        Query selectQuery = em.createQuery(query,UserHouse.class);
+        com.rest.database.entity.User user = new com.rest.database.entity.User();
+        com.rest.database.entity.House house = new com.rest.database.entity.House();
+        user.setId(userId);
+        house.setId(houseId);
+        selectQuery.setParameter("user_id", user);
+        selectQuery.setParameter("house_id", house);
+        List <UserHouse> userHouseList = selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).getResultList();
+        if(userHouseList!=null && userHouseList.size() > 0){
+            return userHouseList.get(0);
+        }else 
+            return null;
+        
     }
 }

@@ -5,12 +5,13 @@
  */
 package com.rest.database.bean;
 
-import com.rest.business.house.entity.UserHouse;
+import com.rest.database.entity.UserHouse;
 import com.rest.database.entity.House;
 import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import java.util.Arrays;
 import java.util.Set;
@@ -53,6 +54,24 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
     }
 
     @Override
+    public <T> T findById(Class<T> entityClass, Object id) {
+        EntityManager em = null;
+        em = getEntityManager();
+        return em.find(entityClass, id);
+    }
+
+    @Override
+    public <T> T getReference(Class<T> entityClass, Object id) {
+        try {
+            EntityManager em = null;
+            em = getEntityManager();
+            return em.getReference(entityClass, id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public Object getHouseByCriteria(int startIndex, int limit, String where) {
         EntityManager em = null;
         em = getEntityManager();
@@ -67,7 +86,6 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
         return selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).setFirstResult(startIndex).setMaxResults(limit).getResultList();
     }
 
-    
     @Override
     public Object createHouse(House house) {
         EntityManager em = null;
@@ -77,13 +95,13 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
             em.persist(house);
             em.flush();
             /*
-            // update user role table also, as per Spring security authority check. [ROLE BASED CHECKED]
-            com.rest.oauth2.entity.UserRoles userRoles = new com.rest.oauth2.entity.UserRoles();
-            userRoles.setUser(user);
-            userRoles.setUsername(user.getUsername());
-            userRoles.setRole(role);
-            em.persist(userRoles);*/
-            
+             // update user role table also, as per Spring security authority check. [ROLE BASED CHECKED]
+             com.rest.oauth2.entity.UserRoles userRoles = new com.rest.oauth2.entity.UserRoles();
+             userRoles.setUser(user);
+             userRoles.setUsername(user.getUsername());
+             userRoles.setRole(role);
+             em.persist(userRoles);*/
+
             em.getTransaction().commit();
         } catch (Throwable t) {
             em.getTransaction().rollback();
@@ -91,12 +109,10 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
         } finally {
             em.clear();
             writeLog();
-            
+
         }
         return house;
     }
-    
-    
 
     @Override
     public Object publishedAdd(UserHouse u) {
@@ -108,10 +124,10 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
             em.getTransaction().commit();
         } catch (NonExistentEntityException ne) {
             em.getTransaction().rollback();
-            return new ServiceException(ne.getMessage(), Defs.ERROR_CODE_INSERT);
+            return new ServiceException(ne.getMessage(), ErrorCodes.INSERT);
         } catch (Throwable t) {
             em.getTransaction().rollback();
-            return new ServiceException(t.getMessage(), Defs.ERROR_CODE_INSERT);
+            return new ServiceException(t.getMessage(), ErrorCodes.INSERT);
         } finally {
             em.clear();
             //writeLog();
@@ -120,17 +136,15 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
         return u;
     }
 
-
-
     @Override
-    public Object findOne(int id) throws ServiceException {
+    public House findOne(int id) throws ServiceException {
         EntityManager em = null;
         House house = null;
         try {
             em = getEntityManager();
-            house =  em.find(House.class, id);
+            house = em.find(House.class, id);
         } catch (Exception e) {
-            throw new ServiceException(e.getMessage(), Defs.ERROR_CODE_GET);
+            throw new ServiceException(e.getMessage(), ErrorCodes.INSERT);
         } finally {
             if (em != null) {
                 em.clear();
@@ -140,5 +154,21 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
 
     }
 
-    
+    @Override
+    public House updateHouse(House house) throws ServiceException {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            house = em.merge(house);
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage(), ErrorCodes.UPDATE);
+        } finally {
+            if (em != null) {
+                em.clear();
+            }
+        }
+        return house;
+
+    }
+
 }

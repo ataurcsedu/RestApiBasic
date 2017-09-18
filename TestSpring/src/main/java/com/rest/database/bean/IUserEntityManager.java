@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 
 public interface IUserEntityManager {
     
+    <T> T findById(Class<T> entityClass, Object id);
+    <T> T getReference(Class<T> entityClass, Object id);
+    
     public Object getUsers(int startIndex, int limit, String where) throws ServiceException;
     public User getUser(String where) throws ServiceException;
     public Object findOne(int id) throws ServiceException;

@@ -13,6 +13,7 @@ import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
 import java.util.ArrayList;
@@ -210,13 +211,13 @@ public class UserManagerBean implements IUserManager {
         com.rest.database.entity.User userEO = new com.rest.database.entity.User();
         Object uobj = null;
         try {
-            uobj = userEntityService.findOne(id);
-        } catch (ServiceException e) {
-            return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
+            userEO = userEntityService.getReference(com.rest.database.entity.User.class,id);
+        } catch (Exception e) {
+            return Utils.processApiError(e.getMessage(), ErrorCodes.GET);
         }
 
-        if (uobj != null || uobj instanceof User) {
-            userEO = (User) uobj;
+        if (userEO != null) {
+            
             String password = null;
             if(!Utils.isEmpty(user.getPassword())){
                 password = passwordEncoder.encode(user.getPassword());
@@ -265,7 +266,7 @@ public class UserManagerBean implements IUserManager {
             }
         }
         if (uobj == null) {
-            return Utils.processApiError("No Entity exist with the id : " + id, Defs.ERROR_CODE_GET);
+            return Utils.processApiError("No Entity exist with the id : " + id, ErrorCodes.GET);
         }
         return userSummary;
     }
@@ -278,7 +279,7 @@ public class UserManagerBean implements IUserManager {
         try {
             uobj = userEntityService.findOne(id);
         } catch (Exception e) {
-            throw new ServiceException(e.getMessage(), Defs.ERROR_CODE_GET);
+            throw new ServiceException(e.getMessage(), ErrorCodes.GET);
         }
 
         if (uobj != null || uobj instanceof User) {
@@ -310,7 +311,7 @@ public class UserManagerBean implements IUserManager {
             }
         }
         if (uobj == null) {
-            throw new ServiceException("No Entity exist with the id : " + id, Defs.ERROR_CODE_GET);
+            throw new ServiceException("No Entity exist with the id : " + id, ErrorCodes.GET);
         }
         return userSummary;
     }

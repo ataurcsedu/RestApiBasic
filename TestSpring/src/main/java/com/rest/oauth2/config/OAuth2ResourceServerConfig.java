@@ -47,8 +47,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 		.requestMatchers().antMatchers("/api/**")
 		.and().authorizeRequests()
 		.antMatchers("/api/**").access("hasAnyRole('ADMIN','USER')")
-                .and().antMatcher("/rent/**").anonymous()
-		.and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
+                .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
 	}
 
 }

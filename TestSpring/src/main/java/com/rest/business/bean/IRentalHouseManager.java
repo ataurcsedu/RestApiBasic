@@ -14,4 +14,5 @@ import com.rest.business.house.entity.HouseSummary;
 
 public interface IRentalHouseManager {
     public Object getRentalInfoByCriteria(Long startIndex, Long limit,HouseSummary houseBO);
+    public Object getMinimumOneHouseByUserId(Integer userId, Integer houseId);
 }

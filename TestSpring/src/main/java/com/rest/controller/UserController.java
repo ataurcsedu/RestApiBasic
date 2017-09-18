@@ -11,6 +11,7 @@ import com.rest.business.user.entity.UserSummary;
 import com.rest.exception.ResourceAccessDeniedException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
 
@@ -47,7 +48,6 @@ public class UserController {
 
     
     @RequestMapping(value = "users", method = RequestMethod.GET)
-    @ResponseBody
     public Object getUsers(SecurityContextHolderAwareRequestWrapper s, HttpServletRequest req, @RequestParam(value = "offset", defaultValue = "0") long index,
             @RequestParam(value = "limit", defaultValue = "10") long limit) throws ResourceAccessDeniedException {
 
@@ -59,7 +59,6 @@ public class UserController {
 
     
     @RequestMapping(value = "users", method = RequestMethod.POST)
-    @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public Object createUsers(HttpServletRequest req,HttpServletResponse response, @ModelAttribute @Valid UserBO userBO, BindingResult result) {
         if(result.hasErrors()){
@@ -71,7 +70,6 @@ public class UserController {
     
     
     @RequestMapping(value = "users/{userid}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public Object updateUsers(HttpServletRequest req,HttpServletResponse response, @RequestBody UserBO userBO, BindingResult result,
             @PathVariable String userid) {
@@ -85,7 +83,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "users/{id}", method = RequestMethod.GET)
-    @ResponseBody
     public UserSummary getUser(HttpServletRequest req, @PathVariable String id) {
         UserSummary userSummary = userService.getUser(id);
         return userSummary;
@@ -93,7 +90,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "users/{id}/activate", method = RequestMethod.GET)
-    @ResponseBody
     public Object activateUser(HttpServletRequest req, @PathVariable String id) {
         if(!Utils.isEmpty(id)){
             UserSummary userSummary;
@@ -104,7 +100,7 @@ public class UserController {
             }
             return userSummary;
         }
-        return Utils.processApiError("No user id Found", Defs.ERROR_CODE_UPDATE);
+        return Utils.processApiError("No user id Found", ErrorCodes.UPDATE);
 
     }
 

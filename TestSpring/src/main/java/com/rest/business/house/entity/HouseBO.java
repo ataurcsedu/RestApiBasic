@@ -5,6 +5,7 @@
  */
 package com.rest.business.house.entity;
 
+import com.rest.utils.Utils;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -52,6 +53,8 @@ public class HouseBO {
     
     public HouseBO(){
     }
+    
+    
 
     public int getId() {
         return id;

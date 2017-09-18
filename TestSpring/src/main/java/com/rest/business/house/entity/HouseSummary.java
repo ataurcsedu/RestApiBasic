@@ -5,6 +5,7 @@
  */
 package com.rest.business.house.entity;
 
+import com.rest.utils.Utils;
 import java.util.Date;
 
 /**
@@ -28,6 +29,24 @@ public class HouseSummary {
         
     }
 
+    
+    public HouseSummary getHouseSummaryObject(com.rest.database.entity.House h){
+        HouseSummary house = new HouseSummary();
+        house.setId(h.getId());
+        house.setArea(h.getArea());
+        house.setRoadNo(h.getRoadNo());
+        house.setHouseNo(h.getHouseNo());
+        house.setRentType(h.getRentType());
+        if(h.getPersonCount()!=null){
+            house.setPersonCount(h.getPersonCount());
+        }
+        house.setRentCost(h.getRentCost());
+        
+        house.setDescription(h.getDescription());
+        house.setFromDate(Utils.getDateToString(h.getFromDate()));
+        house.setPublished(h.getPublished());
+        return house;
+    }
     public int getId() {
         return id;
     }

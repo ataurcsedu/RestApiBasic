@@ -28,8 +28,5 @@ public class Defs {
     public static final String USER_SEX_FEMALE = "FEMALE";
     
     
-    public static final int ERROR_CODE_GET = 1000;
-    public static final int ERROR_CODE_UPDATE = 2000;
-    public static final int ERROR_CODE_INSERT = 3000;
-    public static final int ERROR_CODE_DELETE = 4000;
+
 }

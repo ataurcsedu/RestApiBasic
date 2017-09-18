@@ -10,6 +10,7 @@ import com.rest.business.rentalhouse.entity.RentalHouseSummary;
 import com.rest.database.bean.IRentalHouseEntityManager;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,11 +85,19 @@ public class RentalHouseManagerBean implements IRentalHouseManager {
             }
 
         } catch (ServiceException se) {
-            return Utils.processErrorMessage(se.getErrorMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processErrorMessage(se.getErrorMessage(), ErrorCodes.GET);
         } catch (Throwable t) {
-            return Utils.processErrorMessage(t.getMessage(), Defs.ERROR_CODE_GET);
+            return Utils.processErrorMessage(t.getMessage(), ErrorCodes.GET);
         }
         return houseList;
+    }
+    
+    @Override
+    public Object getMinimumOneHouseByUserId(Integer userId, Integer houseId){
+        if(userId != null && houseId != null){
+            return rentalService.getMinimumOneHouseByUserId(userId, houseId);
+        }
+        return null;
     }
     
 }

@@ -8,7 +8,7 @@ package com.rest.controller;
 import com.rest.business.bean.IHouseManager;
 import com.rest.business.bean.IUserManager;
 import com.rest.database.entity.UserHouse;
-import com.rest.business.house.entity.UserHouseBO;
+import com.rest.business.entity.house.UserHouseBO;
 import com.rest.database.entity.User;
 import com.rest.utils.Defs;
 import com.rest.utils.Utils;

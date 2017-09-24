@@ -6,8 +6,8 @@
 package com.rest.controller;
 
 import com.rest.business.bean.IHouseManager;
-import com.rest.business.house.entity.HouseBO;
-import com.rest.business.house.entity.HouseSummary;
+import com.rest.business.entity.house.HouseBO;
+import com.rest.business.entity.house.HouseSummary;
 import com.rest.utils.Defs;
 import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;

@@ -5,8 +5,8 @@
  */
 package com.rest.business.bean;
 
-import com.rest.business.user.entity.UserBO;
-import com.rest.business.user.entity.UserSummary;
+import com.rest.business.entity.user.UserBO;
+import com.rest.business.entity.user.UserSummary;
 import com.rest.database.entity.User;
 import com.rest.exception.ServiceException;
 import com.rest.ws.response.GetUserServiceResponse;

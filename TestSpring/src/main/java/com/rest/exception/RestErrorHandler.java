@@ -5,6 +5,7 @@
  */
 package com.rest.exception;
 
+import com.rest.utils.Utils;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -54,6 +56,16 @@ public class RestErrorHandler {
         String result = ex.getMessage();
         System.out.println("###########"+result);
         return result;
+    }
+    
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public Errors processUserNameNotFoundException(UsernameNotFoundException ex) {
+        String result = ex.getMessage();
+        System.out.println("###########"+result);
+        return Utils.processApiError(result, 1212);
+        //return result;
     }
  
     private Errors processFieldErrors(List<FieldError> fieldErrors) {

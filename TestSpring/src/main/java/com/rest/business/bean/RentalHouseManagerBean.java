@@ -5,8 +5,8 @@
  */
 package com.rest.business.bean;
 
-import com.rest.business.house.entity.HouseSummary;
-import com.rest.business.rentalhouse.entity.RentalHouseSummary;
+import com.rest.business.entity.house.HouseSummary;
+import com.rest.business.entity.rentalhouse.RentalHouseSummary;
 import com.rest.database.bean.IRentalHouseEntityManager;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;

@@ -6,13 +6,9 @@
 package com.rest.controller;
 
 import com.rest.business.bean.IRentalHouseManager;
-import com.rest.business.house.entity.HouseSummary;
-import com.rest.business.rentalhouse.entity.RentalHouseSummary;
+import com.rest.business.entity.house.HouseSummary;
+import com.rest.business.entity.rentalhouse.RentalHouseSummary;
 import com.rest.utils.Utils;
-import com.test.LogMessageProducer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

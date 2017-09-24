@@ -5,7 +5,7 @@
  */
 package com.rest.ws.response;
 
-import com.rest.business.user.entity.UserSummary;
+import com.rest.business.entity.user.UserSummary;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -6,8 +6,8 @@
 package com.rest.controller;
 
 import com.rest.business.bean.IUserManager;
-import com.rest.business.user.entity.UserBO;
-import com.rest.business.user.entity.UserSummary;
+import com.rest.business.entity.user.UserBO;
+import com.rest.business.entity.user.UserSummary;
 import com.rest.exception.ResourceAccessDeniedException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
@@ -49,7 +49,7 @@ public class UserController {
     
     @RequestMapping(value = "users", method = RequestMethod.GET)
     public Object getUsers(SecurityContextHolderAwareRequestWrapper s, HttpServletRequest req, @RequestParam(value = "offset", defaultValue = "0") long index,
-            @RequestParam(value = "limit", defaultValue = "10") long limit) throws ResourceAccessDeniedException {
+            @RequestParam(value = "limit", defaultValue = "10") long limit)  {
 
         //if(req.isUserInRole("ROLE_USER")){
         GetUserServiceResponse resp = new GetUserServiceResponse();

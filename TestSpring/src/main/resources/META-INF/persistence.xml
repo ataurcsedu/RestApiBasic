@@ -6,6 +6,7 @@
     <class>com.rest.database.entity.User</class>
     <class>com.rest.database.entity.House</class>
     <class>com.rest.database.entity.UserHouse</class>
+    <class>com.rest.database.entity.UsersInfo</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/springrestsampledb"/>

@@ -5,7 +5,7 @@
  */
 package com.rest.business.bean;
 
-import com.rest.business.house.entity.HouseSummary;
+import com.rest.business.entity.house.HouseSummary;
 
 /**
  *

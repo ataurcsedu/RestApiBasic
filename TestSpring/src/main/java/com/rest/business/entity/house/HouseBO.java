@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rest.business.house.entity;
+package com.rest.business.entity.house;
 
 import com.rest.utils.Utils;
 import javax.validation.constraints.NotNull;

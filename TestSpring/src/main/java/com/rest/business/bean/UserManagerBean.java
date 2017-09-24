@@ -5,8 +5,8 @@
  */
 package com.rest.business.bean;
 
-import com.rest.business.user.entity.UserBO;
-import com.rest.business.user.entity.UserSummary;
+import com.rest.business.entity.user.UserBO;
+import com.rest.business.entity.user.UserSummary;
 import com.rest.database.bean.IUserEntityManager;
 import com.rest.database.bean.UserEntityManagerBean;
 import com.rest.database.entity.User;

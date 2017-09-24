@@ -28,6 +28,9 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ClientDetailsService clientService;
     
+    //@Autowired
+    //private UserDetailsService userDetailsService;
+    
     @Autowired
     DataSource dataSource;
     
@@ -37,10 +40,10 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
     
-    @Bean
+    /*@Bean
     public UserDetailsService userDetailsService() {
         return super.userDetailsService();
-    }
+    }*/
     
     @Bean
     public DaoAuthenticationProvider authProvider() {

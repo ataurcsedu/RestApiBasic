@@ -5,24 +5,19 @@
  */
 package com.rest.database.bean;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
-import com.rest.utils.Defs;
 import com.rest.utils.ErrorCodes;
-import com.rest.utils.Utils;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import org.eclipse.persistence.config.CacheUsage;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.eclipse.persistence.exceptions.DatabaseException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -126,7 +121,11 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
             
             em.persist(userRoles);
             em.getTransaction().commit();
-        } catch (Throwable t) {
+        }catch(javax.persistence.PersistenceException e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
+        catch (Throwable t) {
             em.getTransaction().rollback();
             return new ServiceException(t.getMessage(), 1000);
         } finally {
@@ -150,7 +149,11 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
         } catch (NonExistentEntityException ne) {
             em.getTransaction().rollback();
             return new ServiceException(ne.getMessage(), ErrorCodes.UPDATE);
-        } catch (Throwable t) {
+        } catch (PersistenceException p){
+            em.getTransaction().rollback();
+            throw p;
+        } 
+        catch (Throwable t) {
             em.getTransaction().rollback();
             return new ServiceException(t.getMessage(), ErrorCodes.UPDATE);
         } finally {

@@ -46,7 +46,7 @@ public class SwaggerConfig {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("AUTHORIZATION", "api_key", "header");
+        return new ApiKey("AUTHORIZATION", "access_token", "header");
     }
 
     @Bean
@@ -57,7 +57,7 @@ public class SwaggerConfig {
             AuthServerOAuth2Config.REALM+"/client", // realm Needed for authenticate button to work
             null, // appName Needed for authenticate button to work
             "access_token ",// apiKeyValue
-            ApiKeyVehicle.QUERY_PARAM,
+            ApiKeyVehicle.HEADER,
             "access_token", //apiKeyName
             null);
     }

@@ -5,9 +5,13 @@
  */
 package com.rest.exception;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+import com.rest.controller.UserController;
 import com.rest.utils.Utils;
 import java.util.List;
 import java.util.Locale;
+import javax.persistence.PersistenceException;
+import org.eclipse.persistence.exceptions.DatabaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -28,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author Ataur Rahman
  */
-@ControllerAdvice
+@ControllerAdvice(basePackageClasses={UserController.class})
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestErrorHandler {
  
@@ -56,6 +60,15 @@ public class RestErrorHandler {
         String result = ex.getMessage();
         System.out.println("###########"+result);
         return result;
+    }
+    
+    @ExceptionHandler(PersistenceException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Errors processPersistentException(PersistenceException ex) {
+        DatabaseException dbex = (DatabaseException)ex.getCause();
+        MySQLIntegrityConstraintViolationException b  = (MySQLIntegrityConstraintViolationException)dbex.getCause();
+        return Utils.processApiError(b.getLocalizedMessage(), b.getErrorCode());
     }
     
     @ExceptionHandler(UsernameNotFoundException.class)

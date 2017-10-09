@@ -27,6 +27,10 @@ public class CORSFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
         LOG.info("Adding CORS Headers ........................");
+        String ipAddress = "";
+        
+        ipAddress = req.getRemoteAddr();
+        LOG.info("Remote IP ADDRESS ........................" + ipAddress);
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.setHeader("Access-Control-Max-Age", "3600");

@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.provider.approval.TokenStoreUserAppro
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -27,24 +29,21 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ClientDetailsService clientService;
-    
+
     //@Autowired
     //private UserDetailsService userDetailsService;
-    
     @Autowired
     DataSource dataSource;
-    
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     /*@Bean
-    public UserDetailsService userDetailsService() {
-        return super.userDetailsService();
-    }*/
-    
+     public UserDetailsService userDetailsService() {
+     return super.userDetailsService();
+     }*/
     @Bean
     public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -52,7 +51,7 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
         authProvider.setUserDetailsService(userDetailsService());
         return authProvider;
     }
-    
+
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth.eraseCredentials(false).authenticationProvider(authProvider()).jdbcAuthentication().dataSource(dataSource)
@@ -63,37 +62,42 @@ public class OAuth2SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /*this is for in memory client cred*/
     /*@Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("javabycode").password("123456").roles("USER")
-                .and()
-                .withUser("admin").password("admin123").roles("ADMIN");
-    }*/
-
+     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+     auth.inMemoryAuthentication()
+     .withUser("javabycode").password("123456").roles("USER")
+     .and()
+     .withUser("admin").password("admin123").roles("ADMIN");
+     }*/
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .anonymous().disable()
-            .authorizeRequests()
-            .antMatchers("/oauth/token").permitAll();
+                .csrf().disable()
+                .anonymous().disable()
+                .authorizeRequests()
+                .antMatchers("/oauth/token").permitAll();
+                /*.and()
+                .rememberMe().rememberMeParameter("remember-me").tokenRepository(persistentTokenRepository())
+                .tokenValiditySeconds(1209600);*/
     }
-    
-    
-    /*
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**");
-    }*/
 
+    /*
+     @Override
+     public void configure(WebSecurity web) throws Exception {
+     web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**");
+     }*/
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-    
-    
-    
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl db = new JdbcTokenRepositoryImpl();
+        db.setDataSource(dataSource);
+        return db;
+    }
+
     @Bean
     public TokenStore tokenStore() {
         //return new InMemoryTokenStore();

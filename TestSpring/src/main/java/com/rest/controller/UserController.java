@@ -14,6 +14,8 @@ import com.rest.utils.Defs;
 import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,9 +60,10 @@ public class UserController {
     }
 
     
+    @ApiOperation(value = "Create a new user", notes = "It creates a new user, but still this state is INACTIVE, to activate you need to invoke activate url")
     @RequestMapping(value = "users", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public Object createUsers(HttpServletRequest req,HttpServletResponse response, @ModelAttribute @Valid UserBO userBO, BindingResult result) {
+    public Object createUsers(HttpServletRequest req,HttpServletResponse response, @RequestBody @Valid UserBO userBO, BindingResult result) {
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
         }
@@ -69,6 +72,7 @@ public class UserController {
     }
     
     
+    @ApiOperation(value = "Update a user by user_id", notes = "It will update a user by user_id")
     @RequestMapping(value = "users/{userid}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Object updateUsers(HttpServletRequest req,HttpServletResponse response, @RequestBody UserBO userBO, BindingResult result,
@@ -82,6 +86,7 @@ public class UserController {
         return null;
     }
 
+    @ApiOperation(value = "Get a Single user by user_id", notes = "It Get a Single user by user_id", response = UserSummary.class)
     @RequestMapping(value = "users/{id}", method = RequestMethod.GET)
     public UserSummary getUser(HttpServletRequest req, @PathVariable String id) {
         UserSummary userSummary = userService.getUser(id);
@@ -89,6 +94,7 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "Activate a user for given id", notes = "It activate a new user with provided user_id in the path")
     @RequestMapping(value = "users/{id}/activate", method = RequestMethod.GET)
     public Object activateUser(HttpServletRequest req, @PathVariable String id) {
         if(!Utils.isEmpty(id)){

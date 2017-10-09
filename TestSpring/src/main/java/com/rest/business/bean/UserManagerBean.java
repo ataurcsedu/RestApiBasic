@@ -198,6 +198,9 @@ public class UserManagerBean implements IUserManager {
                 userSummary.setSex(u.getSex());
                 userSummary.setCode(u.getCode());
                 userSummary.setStatus(u.getStatus());
+            }else if(object != null && object instanceof ServiceException){
+                ServiceException s = (ServiceException)object;
+                return Utils.processApiError(s.getErrorMessage(), s.getErrorCode());
             }
         } catch (ServiceException e) {
             return Utils.processApiError(e.getErrorMessage(), e.getErrorCode());
@@ -274,7 +277,7 @@ public class UserManagerBean implements IUserManager {
     @Override
     public UserSummary activateUser(int id) throws ServiceException {
         UserSummary userSummary = new UserSummary();
-        com.rest.database.entity.User userEO = new com.rest.database.entity.User();
+        com.rest.database.entity.User userEO = null;
         Object uobj = null;
         try {
             uobj = userEntityService.findOne(id);

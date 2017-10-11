@@ -5,7 +5,6 @@
  */
 package com.rest.database.bean;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
@@ -17,7 +16,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import org.eclipse.persistence.config.CacheUsage;
-import org.eclipse.persistence.exceptions.DatabaseException;
 import org.springframework.stereotype.Service;
 
 /**

@@ -15,6 +15,8 @@ import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +45,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(Defs.CONTROLLER_PATH)
 
+
 public class UserController {
 
     @Autowired
     private IUserManager userService;
 
-    
+    /*@ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization",
+            value = "Bearer access_token",
+            required = true,
+            dataType = "string",
+            paramType = "header"),
+    })*/
     @RequestMapping(value = "users", method = RequestMethod.GET)
     public Object getUsers(SecurityContextHolderAwareRequestWrapper s, HttpServletRequest req, @RequestParam(value = "offset", defaultValue = "0") long index,
             @RequestParam(value = "limit", defaultValue = "10") long limit)  {
@@ -102,7 +111,7 @@ public class UserController {
             try {
                 userSummary = userService.activateUser(Integer.parseInt(id));
             } catch (ServiceException ex) {
-                return Utils.processApiError(ex.getMessage(), ex.getErrorCode());
+                return Utils.processApiError(ex.getErrorMessage(), ex.getErrorCode());
             }
             return userSummary;
         }

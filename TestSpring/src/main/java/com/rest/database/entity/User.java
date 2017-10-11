@@ -94,7 +94,8 @@ public class User implements Serializable {
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "dob")
-    private String dob;
+    @Temporal(TemporalType.DATE)
+    private Date dob;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 30)
@@ -140,7 +141,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String mobile, String email, String username, String fullname, String password, String dob, String code, String status, int enabled, String createdBy, Date creationDate, String lastUpdatedBy, Date lastUpdateDate) {
+    public User(Integer id, String mobile, String email, String username, String fullname, String password, Date dob, String code, String status, int enabled, String createdBy, Date creationDate, String lastUpdatedBy, Date lastUpdateDate) {
         this.id = id;
         this.mobile = mobile;
         this.email = email;
@@ -205,13 +206,15 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getDob() {
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(String dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
+
+
 
     public String getCode() {
         return code;

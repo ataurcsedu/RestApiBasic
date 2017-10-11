@@ -55,8 +55,8 @@ import org.springframework.validation.FieldError;
  */
 public class Utils {
 
-    public static final String DATE_FORMAT_REGEX = "\\d\\d\\d\\d[/](0[1-9]|1[012]|[1-9])[/](0[1-9]|[1-9]|[12][0-9]|3[01])"; //yyyy/MM/dd
-    public static final String DATE_FORMAT_DATE_ONLY = "yyyy/MM/dd";
+    public static final String DATE_FORMAT_REGEX = "\\d\\d\\d\\d[-](0[1-9]|1[012]|[1-9])[-](0[1-9]|[1-9]|[12][0-9]|3[01])"; //yyyy/MM/dd
+    public static final String DATE_FORMAT_DATE_ONLY = "yyyy-MM-dd";
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PHONE_NO_REGEX = "[0-9]+";
 
@@ -95,9 +95,9 @@ public class Utils {
     public static String getDateToString(Date date) {
         try {
             if (date == null) {
-                return "0000/00/00";
+                return "0000-00-00";
             }
-            return (new SimpleDateFormat("yyyy/MM/dd")).format(date);
+            return (new SimpleDateFormat("yyyy-MM-dd")).format(date);
         } catch (Exception ex) {
             return "";
         }

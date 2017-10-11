@@ -69,7 +69,7 @@ public class UserManagerBean implements IUserManager {
                     user.setEmail((String) objArr[2]);
                     user.setUserName((String) objArr[3]);
                     user.setFullName((String) objArr[4]);
-                    user.setDob((String) objArr[5]);
+                    user.setDob(Utils.getDateToString((Date) objArr[5]));
                     user.setCode((String) objArr[6]);
                     user.setSex((String) objArr[7]);
                     user.setStatus((String) objArr[8]);
@@ -83,11 +83,10 @@ public class UserManagerBean implements IUserManager {
             response.setTotalCount(totalCount);
             response.getOperationResult().setSuccess(true);
         } catch (ServiceException se) {
-            response.getOperationResult().setSuccess(false);
-            response.getOperationResult().setErrorList(Arrays.asList(se.getErrorMessage()));
+            return Utils.processApiError(se.getErrorMessage(), ErrorCodes.GET);
+            
         } catch (Throwable t) {
-            response.getOperationResult().setSuccess(false);
-            response.getOperationResult().setErrorList(Arrays.asList(t.getMessage()));
+            return Utils.processApiError(t.getMessage(), ErrorCodes.GET);
         }
         return userList;
     }
@@ -115,7 +114,7 @@ public class UserManagerBean implements IUserManager {
                 userSummary.setEmail(u.getEmail());
                 userSummary.setUserName(u.getUsername());
                 userSummary.setFullName(u.getFullname());
-                userSummary.setDob(u.getDob());
+                userSummary.setDob(Utils.getDateToString(u.getDob()));
                 userSummary.setCode(u.getCode());
                 userSummary.setSex(u.getSex());
                 userSummary.setStatus(u.getStatus());
@@ -162,6 +161,10 @@ public class UserManagerBean implements IUserManager {
     @Override
     public Object createUser(UserBO user, String role) {
         UserSummary userSummary = new UserSummary();
+        Date dob = Utils.getStringToDate(user.getDob());
+        if(dob==null || dob.toString().length() == 0){
+            return Utils.processApiError("Date of birth can not be empty.", ErrorCodes.INVALID);
+        }
         com.rest.database.entity.User userEO = new com.rest.database.entity.User();
         String password = passwordEncoder.encode(user.getPassword());
         userEO.setUsername(user.getUserName());
@@ -175,8 +178,9 @@ public class UserManagerBean implements IUserManager {
         if (user.getSex() != null) {
             userEO.setSex(user.getSex());
         }
-
-        userEO.setDob(user.getDob());
+        
+        
+        userEO.setDob(dob);
         Date date = new Date();
         userEO.setCreationDate(date);
         userEO.setLastUpdateDate(date);
@@ -194,7 +198,7 @@ public class UserManagerBean implements IUserManager {
                 userSummary.setEmail(u.getEmail());
                 userSummary.setUserName(u.getUsername());
                 userSummary.setFullName(u.getFullname());
-                userSummary.setDob(u.getDob());
+                userSummary.setDob(Utils.getDateToString(u.getDob()));
                 userSummary.setSex(u.getSex());
                 userSummary.setCode(u.getCode());
                 userSummary.setStatus(u.getStatus());
@@ -211,6 +215,8 @@ public class UserManagerBean implements IUserManager {
     @Override
     public Object updateUser(UserBO user, int id) {
         UserSummary userSummary = new UserSummary();
+        
+        
         com.rest.database.entity.User userEO = new com.rest.database.entity.User();
         Object uobj = null;
         try {
@@ -241,8 +247,9 @@ public class UserManagerBean implements IUserManager {
             if(!Utils.isEmpty(user.getMobile())){
                 userEO.setMobile(user.getMobile());
             }
+            Date dob = Utils.getStringToDate(user.getDob());
             if(!Utils.isEmpty(user.getDob())){
-                userEO.setDob(user.getDob());
+                userEO.setDob(dob);
             }
             Date date = new Date();
             userEO.setCreationDate(date);
@@ -259,7 +266,7 @@ public class UserManagerBean implements IUserManager {
                     userSummary.setEmail(u.getEmail());
                     userSummary.setUserName(u.getUsername());
                     userSummary.setFullName(u.getFullname());
-                    userSummary.setDob(u.getDob());
+                    userSummary.setDob(Utils.getDateToString(u.getDob()));
                     userSummary.setCode(u.getCode());
                     userSummary.setSex(u.getSex());
                     userSummary.setStatus(u.getStatus());
@@ -305,7 +312,7 @@ public class UserManagerBean implements IUserManager {
                     userSummary.setEmail(u.getEmail());
                     userSummary.setUserName(u.getUsername());
                     userSummary.setFullName(u.getFullname());
-                    userSummary.setDob(u.getDob());
+                    userSummary.setDob(Utils.getDateToString(u.getDob()));
                     userSummary.setCode(u.getCode());
                     userSummary.setStatus(u.getStatus());
                 }

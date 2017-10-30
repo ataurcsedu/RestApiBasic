@@ -101,6 +101,20 @@ public class UserEntityManagerBean extends BaseEntityManager implements IUserEnt
         
         return null;
     }
+    
+    @Override
+    public Object getOnlyUserNameByUserName(String where){
+        EntityManager em = null;
+        em = getEntityManager();
+        where += " 1=1";
+
+        String query = "select u.username from user u where " + where;
+        System.out.println("QUERY= " + query);
+        Query selectQuery = em.createNativeQuery(query);
+
+        Object o = selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).getResultList();
+        return o;
+    }
 
     @Override
     public Object createUser(User user,String role) {

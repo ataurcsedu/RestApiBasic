@@ -17,6 +17,7 @@ public interface IHouseManager {
     public Object createHouse(HouseBO houseBO,String role);
     public Object updateHouse(HouseBO houseBO,Integer userId, Integer houseId);
     public Object getHouseById(int id);
+    public Object getHouseCreatedByUser();
     public Object getHouseByCriteria(Long startIndex, Long limit,HouseSummary houseBO);
     public Object publishedAdd(User user,String houseId);
 }

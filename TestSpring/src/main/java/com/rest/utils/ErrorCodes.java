@@ -15,5 +15,6 @@ public class ErrorCodes {
     public static final int UPDATE = 2000;
     public static final int INSERT = 3000;
     public static final int DELETE = 4000;
+    public static final int NOT_FOUND = 4004;
     public static final int INVALID = 9999;
 }

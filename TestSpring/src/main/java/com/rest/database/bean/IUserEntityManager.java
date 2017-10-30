@@ -9,6 +9,7 @@ import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ public interface IUserEntityManager {
     
     public Object getUsers(int startIndex, int limit, String where) throws ServiceException;
     public User getUser(String where) throws ServiceException;
+    public Object getOnlyUserNameByUserName(String where);
     public Object findOne(int id) throws ServiceException;
     public Object createUser(User user,String role) throws ServiceException;
     public Object updateUser(User user) throws ServiceException;

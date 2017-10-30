@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -143,7 +144,7 @@ public class UserManagerBean implements IUserManager {
 
             where += Utils.buildEqualQuery("u.username", userName);
             where += Utils.buildEqualQuery("u.password", password);
-            where += Utils.buildEqualQuery("u.status", "ACTIVE");
+            where += Utils.buildEqualQuery("u.status", Defs.STATUS_ACTIVE);
 
             userEO = userEntityService.getUser(where);
 
@@ -156,6 +157,34 @@ public class UserManagerBean implements IUserManager {
             response.getOperationResult().setErrorList(Arrays.asList(t.getMessage()));
         }
         return userEO;
+    }
+    
+    @Override
+    public List<String> getUserByName(String userName) {
+        GetUserServiceResponse response = new GetUserServiceResponse();
+        List <String> userNameList = new ArrayList<String>();
+        Object object = null;
+        try {
+
+            //UserEntityManagerBean umb = new UserEntityManagerBean();
+            String where = "";
+
+            where += Utils.buildJPQLLikeQuery("u.username", userName);
+            where += Utils.buildEqualQuery("u.status", Defs.STATUS_ACTIVE);
+            
+            object = userEntityService.getOnlyUserNameByUserName(where);
+            if(object!=null && object instanceof  List){
+                List<Object> sList = (List<Object>) object;
+                for (Object s : sList) {
+                    String un = (String)s;
+                    userNameList.add(un);
+                }
+            }
+            
+        }catch (Throwable t) {
+            throw new UsernameNotFoundException("User name not found");
+        }
+        return userNameList;
     }
 
     @Override

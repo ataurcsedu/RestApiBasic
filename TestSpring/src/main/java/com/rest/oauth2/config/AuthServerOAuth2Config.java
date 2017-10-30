@@ -40,6 +40,8 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
         
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+            clients.jdbc(dataSource);
+            /*
             clients.inMemory()
 	    .withClient("myRestClient") // client id
             .authorizedGrantTypes("password", "authorization_code", "refresh_token", "implicit")
@@ -47,7 +49,7 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
             .scopes("read", "write", "trust").resourceIds(RESOURCE_ID)
             .secret("P@ssw0rd")
             .accessTokenValiditySeconds(1200).//invalid after 20 minutes.
-            refreshTokenValiditySeconds(1800);//refresh after 30 minutes.
+            refreshTokenValiditySeconds(1800);//refresh after 30 minutes.*/
 	}
 
 	@Override

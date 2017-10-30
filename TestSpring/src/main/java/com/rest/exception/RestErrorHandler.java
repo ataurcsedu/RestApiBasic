@@ -7,6 +7,7 @@ package com.rest.exception;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.rest.controller.UserController;
+import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import java.util.List;
 import java.util.Locale;
@@ -72,12 +73,12 @@ public class RestErrorHandler {
     }
     
     @ExceptionHandler(UsernameNotFoundException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public Errors processUserNameNotFoundException(UsernameNotFoundException ex) {
         String result = ex.getMessage();
         System.out.println("###########"+result);
-        return Utils.processApiError(result, 1212);
+        return Utils.processApiError(result, ErrorCodes.NOT_FOUND);
         //return result;
     }
  

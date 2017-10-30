@@ -10,6 +10,7 @@ import com.rest.business.entity.user.UserSummary;
 import com.rest.database.entity.User;
 import com.rest.exception.ServiceException;
 import com.rest.ws.response.GetUserServiceResponse;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,5 +25,6 @@ public interface IUserManager {
     public Object updateUser(UserBO user,int id);
     public UserSummary getUser(String userId);
     public User getUser(String userName,String password);
+    public List<String> getUserByName(String userName);
     public UserSummary activateUser(int userId)throws ServiceException;
 }

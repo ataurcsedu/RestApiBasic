@@ -23,6 +23,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         @Autowired
         DataSource dataSource;
         
+        
         @Bean
         public TokenStore tokenStore() {
             return new JdbcTokenStore(dataSource);
@@ -37,15 +38,15 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 	public void configure(ResourceServerSecurityConfigurer resources) {
             // This is for in memory token store. so this line should be commented
             //resources.tokenStore(AuthServerOAuth2Config.tokenStore).resourceId(RESOURCE_ID).stateless(false);
-            resources.tokenStore(tokenStore()).resourceId(RESOURCE_ID).stateless(false);
+            resources.tokenStore(tokenStore()).resourceId(RESOURCE_ID).stateless(true);
 	}
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.
-		anonymous().disable()
-		.requestMatchers().antMatchers("/api/**")
-		.and().authorizeRequests()
+		http
+		.anonymous().disable()
+		//.requestMatchers().antMatchers("/api/**")
+		/*.and()*/.authorizeRequests()
 		.antMatchers("/api/**").access("hasAnyRole('ADMIN','USER')")
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
 	}

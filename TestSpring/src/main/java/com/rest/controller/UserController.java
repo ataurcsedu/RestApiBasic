@@ -6,18 +6,18 @@
 package com.rest.controller;
 
 import com.rest.business.bean.IUserManager;
+import com.rest.business.entity.user.UserAvailabilityCheck;
 import com.rest.business.entity.user.UserBO;
+import com.rest.business.entity.user.UserName;
 import com.rest.business.entity.user.UserSummary;
-import com.rest.exception.ResourceAccessDeniedException;
 import com.rest.exception.ServiceException;
 import com.rest.utils.Defs;
 import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import com.rest.ws.response.GetUserServiceResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,15 +27,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  *
@@ -93,6 +92,42 @@ public class UserController {
             return userService.updateUser(userBO,Integer.parseInt(userid));
         }
         return null;
+    }
+    
+    @ApiOperation(value = "User name availability check", notes = "It will check if a user name is exist in database, if exist then return some available user name")
+    @RequestMapping(value = "users/check-user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Object checkUserAvailable(HttpServletRequest req,@RequestBody UserName userName) {
+        if(userName==null){
+            return Utils.processApiError("No user name provided in the request", ErrorCodes.NOT_FOUND);
+        }
+        UserAvailabilityCheck uCheck = new UserAvailabilityCheck();
+        if(userName!=null && userName.getUserName().length() > 0 && Utils.isUserNameValid(userName.getUserName())){
+            
+            List<String> userList = userService.getUserByName(userName.getUserName());
+            if(userList!=null && userList.size() > 0){
+                for (String u : userList) {
+                    if(u.toUpperCase().equalsIgnoreCase(userName.getUserName().toUpperCase())){
+                        uCheck.setMessage("User name already exist.");
+                        List<String>tmpUserList = new ArrayList<String>();
+                        while(tmpUserList!=null){
+                            tmpUserList = Utils.generateFourUserName(userName.getUserName());
+                            tmpUserList.removeAll(userList);
+                            if(tmpUserList!=null && tmpUserList.size() > 0)
+                                break;
+                        }
+                        uCheck.setAvailableUser(tmpUserList);
+                    }
+                }
+                return uCheck;
+            }else{
+                uCheck.setMessage("User name available");
+                uCheck.setAvailableUser(null);
+                return uCheck;
+            }
+            
+        }
+        return Utils.processApiError("Provided user name not valid", ErrorCodes.INVALID);
     }
 
     @ApiOperation(value = "Get a Single user by user_id", notes = "It Get a Single user by user_id", response = UserSummary.class)

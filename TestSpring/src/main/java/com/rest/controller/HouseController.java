@@ -6,8 +6,10 @@
 package com.rest.controller;
 
 import com.rest.business.bean.IHouseManager;
+import com.rest.business.bean.IUserManager;
 import com.rest.business.entity.house.HouseBO;
 import com.rest.business.entity.house.HouseSummary;
+import com.rest.database.entity.User;
 import com.rest.utils.Defs;
 import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  *
@@ -35,10 +39,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(Defs.CONTROLLER_PATH)
+
 public class HouseController {
 
     @Autowired
     IHouseManager houseService;
+    
+    @Autowired
+    private IUserManager userService;
     
     @InitBinder
     void initBinder(WebDataBinder binder) {
@@ -54,7 +62,13 @@ public class HouseController {
             return Utils.processApiError(result.getFieldErrors(),response);
         }
         Object object = houseService.getHouseByCriteria(index, limit, house);
-        Integer userId = Utils.getCurrentUserId();
+        UserDetails u = Utils.getCurrentUserDetailsObject();
+        return object;
+    }
+    
+    @RequestMapping(value = "house-created-by-user", method = RequestMethod.GET)
+    public Object getHouseCreatedByUser(HttpServletRequest req , HttpServletResponse response) {
+        Object object = houseService.getHouseCreatedByUser();
         return object;
     }
     
@@ -76,20 +90,31 @@ public class HouseController {
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
         }
+        UserDetails ud = Utils.getCurrentUserDetailsObject();
+        if(ud!=null){
+            User u = userService.getUser(ud.getUsername(), ud.getPassword());
+        }
+        
         //if roles field is empty the default user created with ROLE_USER
         return houseService.createHouse(house,Defs.ROLE_USER);
     }
     
-    @RequestMapping(value = "users/{userId}/house/{houseId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "house/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Object updateHouse(HttpServletRequest req,HttpServletResponse response, @RequestBody HouseBO houseBO, BindingResult result,
-            @PathVariable String userId,@PathVariable String houseId) {
+            @PathVariable String id) {
         if(result.hasErrors()){
             return Utils.processApiError(result.getFieldErrors(),response);
         }
-        if(!Utils.isEmpty(userId) && !Utils.isEmpty(houseId)){
+        UserDetails ud = Utils.getCurrentUserDetailsObject();
+        User u = null;
+        if(ud!=null){
+            u = userService.getUser(ud.getUsername(), ud.getPassword());
+        }
+        
+        if(u.getId()!=null && u.getId().intValue() > 0){
             try{
-                return houseService.updateHouse(houseBO,Integer.parseInt(userId),Integer.parseInt(houseId));
+                return houseService.updateHouse(houseBO,u.getId(),Integer.parseInt(id));
             }catch(Exception e){
                 return Utils.processApiError("Invalid user id or house", ErrorCodes.INVALID);
             }

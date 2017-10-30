@@ -11,6 +11,7 @@ import com.rest.database.entity.User;
 import com.rest.exception.NonExistentEntityException;
 import com.rest.exception.ServiceException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ public interface IHouseEntityManager {
     <T> T findById(Class<T> entityClass, Object id);
     <T> T getReference(Class<T> entityClass, Object id);
     public Object getHouseByCriteria(int startIndex, int limit, String where) throws ServiceException;
+    public List<House> getHouseCreatedByUser(String userName) throws ServiceException;
     public House findOne(int id) throws ServiceException;
     public Object createHouse(House house) throws ServiceException;
     public House updateHouse(House house) throws ServiceException;

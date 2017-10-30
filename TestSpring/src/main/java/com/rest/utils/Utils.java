@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -46,7 +47,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.FieldError;
 
 /**
@@ -59,6 +62,7 @@ public class Utils {
     public static final String DATE_FORMAT_DATE_ONLY = "yyyy-MM-dd";
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PHONE_NO_REGEX = "[0-9]+";
+    private static final String USER_NAME_REGEX = "[^a-zA-Z_0-9]";
 
     public static Date getStringToDate(String stringDate) {
 
@@ -391,6 +395,12 @@ public class Utils {
         int n = 100000 + rnd.nextInt(900000);
         return String.valueOf(n);
     }
+    
+    public static String generateThreeDigitUniqueNumber() {
+        Random rnd = new Random();
+        int n = 100 + rnd.nextInt(900);
+        return String.valueOf(n);
+    }
 
     public static boolean isEmpty(List<String> str) {
         if (str == null || str.size() <= 0) {
@@ -451,13 +461,34 @@ public class Utils {
         return Defs.CREATED_BY_USER;
     }
     
-    public static Integer getCurrentUserId(){
-//        MyUserPrincipal authUser = (MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if(authUser != null){
-//            return authUser.getUser().getId();
-//        }
+    public static UserDetails getCurrentUserDetailsObject(){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String id = null;
+        if (authentication != null){
+            if (authentication.getPrincipal() instanceof UserDetails){
+                return ((UserDetails) authentication.getPrincipal());
+            }
+        }
         return null;
     }
     
+    public static boolean isUserNameValid(String userName){
+        Pattern pat = Pattern.compile(USER_NAME_REGEX);
+        Matcher mat = pat.matcher(userName);
+        while (mat.find()){
+          return false;
+        }
+        return true;
+    }
+    
+    public static List<String> generateFourUserName(String userName){
+        List<String> userList = new ArrayList<String>();
+        for (int i = 0; i < 4; i++) {
+            String tmp = userName+"_"+generateThreeDigitUniqueNumber();
+            userList.add(tmp);
+        }
+        return userList;
+    }
     
 }

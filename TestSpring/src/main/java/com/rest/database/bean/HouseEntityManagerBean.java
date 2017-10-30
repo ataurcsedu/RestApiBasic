@@ -14,6 +14,7 @@ import com.rest.utils.Defs;
 import com.rest.utils.ErrorCodes;
 import com.rest.utils.Utils;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,6 +85,16 @@ public class HouseEntityManagerBean extends BaseEntityManager implements IHouseE
         writeLog();
 
         return selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).setFirstResult(startIndex).setMaxResults(limit).getResultList();
+    }
+    
+    @Override
+    public List<House> getHouseCreatedByUser(String createdBy) {
+        EntityManager em = null;
+        em = getEntityManager();
+        
+        Query selectQuery = em.createNamedQuery("House.findByCreatedBy");
+
+        return selectQuery.setHint(CacheUsage.NoCache, CacheUsage.DoNotCheckCache).setParameter("createdBy", createdBy).getResultList();
     }
 
     @Override
